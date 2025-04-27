@@ -40,7 +40,7 @@ public class Paralelo {
         Thread[] thread = new Thread[threads];
 
         for (int i = 0; i < threads; i++) {
-            int index = i * wordsPerThread;
+            int index = i;
             thread[i] = new Thread(()->{
                 searchWords(index);
             });
@@ -59,8 +59,15 @@ public class Paralelo {
         }
     }
 
-    private void searchWords(int threadIndex){
-        for(int i = threadIndex; i < threadIndex + wordsPerThread; i++){
+    private void searchWords(int indice){
+        int threadIndex = indice * wordsPerThread;
+        int limit = threadIndex + wordsPerThread;
+
+        if(indice == threads - 1){
+            limit = words.length;
+        }
+        
+        for(int i = threadIndex; i < limit; i++){
             Integer index = wordMap.get(words[i]);
             if (index != null) { 
                 searchWordsCount[index]++;
