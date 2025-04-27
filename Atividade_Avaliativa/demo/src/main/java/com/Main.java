@@ -13,5 +13,26 @@ public class Main {
             System.out.println("Tempo de execução: " + sequencial.getTime() + "ms");
             sequencial.print();
         }
+
+        System.out.println("-----------------------------------------------------");
+
+        for(int i = 0; i< 30; i++){
+            Paralelo paralelo = new Paralelo(2,words,searchWords);
+            System.out.println("Tempo de execução: " + paralelo.getTime() + "ms");
+            paralelo.print();
+        }
+
+       String[] searchWords2 = {"eita", "bacana", "vixe", "forbidden", "indignation", "oppression"};
+        for(int i = 0; i< 30; i++){
+            Sequencial sequencial = new Sequencial(words,searchWords2);
+            System.out.println("Tempo de execução: " + sequencial.getTime() + "ms");
+           sequencial.print();
+        }
+        System.out.println("-----------------------------------------------------");
+        for(int i = 0; i< 30; i++){
+            Paralelo paralelo = new Paralelo(8,words,searchWords2);
+            System.out.println("Tempo de execução: " + paralelo.getTime() + "ms");
+            paralelo.print();
+        }
     }
 }
