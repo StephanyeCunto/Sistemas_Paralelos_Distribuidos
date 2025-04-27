@@ -6,35 +6,6 @@ public class Main {
         String[] words = pdf.getWords();
         pdf.closePDF();
 
-        String[] searchWords = {"clarissa", "lovelace", "letter", "dear", "miss", "virtue"};
-
-        for(int i = 0; i< 30; i++){
-            Sequencial sequencial = new Sequencial(words,searchWords);
-            System.out.println("Tempo de execução: " + sequencial.getTime() + "ms");
-          //  sequencial.print();
-        }
-
-        System.out.println("-----------------------------------------------------");
-
-        for(int i = 0; i< 30; i++){
-            Paralelo paralelo = new Paralelo(8,words,searchWords);
-            System.out.println("Tempo de execução: " + paralelo.getTime() + "ms");
-            paralelo.print();
-        }
-
-     /*   String[] searchWords2 = {"eita", "bacana", "vixe", "forbidden", "indignation", "oppression"};
-        for(int i = 0; i< 30; i++){
-            Sequencial sequencial = new Sequencial(words,searchWords2);
-            System.out.println("Tempo de execução: " + sequencial.getTime() + "ms");
-           sequencial.print();
-        }
-        System.out.println("-----------------------------------------------------");
-        for(int i = 0; i< 30; i++){
-            Paralelo paralelo = new Paralelo(8,words,searchWords2);
-            System.out.println("Tempo de execução: " + paralelo.getTime() + "ms");
-            paralelo.print();
-        }
-
-        */
+        Tester tester = new Tester(words);
     }
 }

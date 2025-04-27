@@ -25,11 +25,11 @@ public class Sequencial {
     }
 
     private void setStartTime() {
-        this.startTime = System.currentTimeMillis();
+        this.startTime = System.nanoTime()/10000;
     }
 
     private void setEndTime() {
-        this.endTime = System.currentTimeMillis();
+        this.endTime = System.nanoTime()/10000;
         this.time = endTime - startTime;
     }
 

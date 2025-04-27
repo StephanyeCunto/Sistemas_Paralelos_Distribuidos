@@ -28,11 +28,11 @@ public class Paralelo {
     }
 
     private void setStartTime() {
-        this.startTime = System.currentTimeMillis();
+        this.startTime = System.nanoTime()/10000;
     }
 
     private void setEndTime() {
-        this.endTime = System.currentTimeMillis();
+        this.endTime = System.nanoTime()/10000;
         this.time = endTime - startTime;
     }
 
@@ -66,7 +66,7 @@ public class Paralelo {
         if(indice == threads - 1){
             limit = words.length;
         }
-        
+
         for(int i = threadIndex; i < limit; i++){
             Integer index = wordMap.get(words[i]);
             if (index != null) { 
