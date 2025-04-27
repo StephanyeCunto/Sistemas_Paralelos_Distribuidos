@@ -1,0 +1,20 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "LeitorPDF",
+      "request": "launch",
+      "mainClass": "com.LeitorPDF",
+      "projectName": "demo"
+    },
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "/Users/stephanye/Documents/SPD",
+      "program": "/Users/stephanye/Documents/SPD/build/Debug/outDebug"
+    }
+  ]
+}
