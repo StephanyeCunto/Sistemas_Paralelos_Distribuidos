@@ -3,6 +3,20 @@
   "configurations": [
     {
       "type": "java",
+      "name": "GraphTester",
+      "request": "launch",
+      "mainClass": "com.GraphTester",
+      "projectName": "demo"
+    },
+    {
+      "type": "java",
+      "name": "Tester",
+      "request": "launch",
+      "mainClass": "com.Tester",
+      "projectName": "demo"
+    },
+    {
+      "type": "java",
       "name": "Main",
       "request": "launch",
       "mainClass": "com.Main",

@@ -2,7 +2,9 @@ package com;
 
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
 
+@Getter
 public class Sequencial {
     private String[] words;
     private int[] searchWordsCount;
@@ -40,17 +42,5 @@ public class Sequencial {
                 searchWordsCount[index]++;
             }
         }
-    }
-
-    public void print() {
-        for (Map.Entry<String, Integer> entry : wordMap.entrySet()) {
-            System.out.println("Palavra " + entry.getKey() + " encontrada " + searchWordsCount[entry.getValue()] + " vezes.");
-        }
-
-        System.out.println("Total de palavras: " + words.length);
-    }
-
-    public long getTime() {
-        return time;
     }
 }

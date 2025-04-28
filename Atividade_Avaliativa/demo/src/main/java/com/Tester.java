@@ -1,217 +1,188 @@
 package com;
 
-import java.util.Arrays;
-
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.category.DefaultCategoryDataset;
+
+import javax.swing.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Tester {
     private String[] words;
-    private String[][] searchWords = {{"clarissa", "lovelace", "letter", "dear", "miss", "virtue"},
-    {"eita", "bacana", "vixe", "forbidden", "indignation", "oppression"}};
-    private int[] threads = {2,4,8};
-
+    private String[][] searchWords = { { "clarissa","letter", "lovelace", "virtue" , "dear", "miss"},
+            { "eita", "bacana", "vixe", "forbidden", "indignation", "oppression" } };
+    private int[] threads = { 2, 4, 8 };
     private int interactions = 30;
-
     private int[][] timeSequencialSearchWords = new int[searchWords.length][interactions];
     private int[][][] timeParaleloSearchWords = new int[searchWords.length][threads.length][interactions];
-
     private float[] timeSequencialAvarage = new float[searchWords.length];
     private float[][] timeParaleloAvarage = new float[searchWords.length][threads.length];
 
+    Map<String, List<Integer>> wordMap = new HashMap<>();
+
     public Tester(String[] words) {
         this.words = words;
-
         testerSearchWords();
         removeWarmUp();
         removeOutliers();
         setAverage();
         print();
+        generateGraph();
+        generateGraph2();
     }
 
-    private void testerSearchWords(){
-        for(int i = 0; i< searchWords.length; i++){
-            for(int j = 0; j< interactions; j++){
-                Sequencial sequencial = new Sequencial(words,searchWords[i]);
+    private void testerSearchWords() {
+        for (int i = 0; i < searchWords.length; i++) {
+            for (int j = 0; j < interactions; j++) {
+                Sequencial sequencial = new Sequencial(words, searchWords[i]);
                 timeSequencialSearchWords[i][j] = (int) sequencial.getTime();
-            }
-        }
 
-        for(int i = 0; i< searchWords.length; i++){
-            for(int j = 0; j< threads.length; j++){
-                for(int k = 0; k< interactions; k++){
-                    Paralelo paralelo = new Paralelo(threads[j],words,searchWords[i]);
+                if(j == interactions - 1){
+                    sequencial.getWordMap().forEach((key, value) -> {
+                        List<Integer> list= new ArrayList<>();
+                            list.add(value);
+                            list.add(sequencial.getSearchWordsCount()[value]);
+                        wordMap.put(key,list);
+                    });
+                }                
+            }
+
+        }for(int i = 0;i<searchWords.length;i++){
+            for (int j = 0; j < threads.length; j++) {
+                for (int k = 0; k < interactions; k++) {
+                    Paralelo paralelo = new Paralelo(threads[j], words, searchWords[i]);
                     timeParaleloSearchWords[i][j][k] = (int) paralelo.getTime();
                 }
             }
         }
     }
 
-    private void removeWarmUp(){
-        for(int i = 0; i< searchWords.length; i++){
+    private void removeWarmUp() {
+        for (int i = 0; i < searchWords.length; i++) {
             timeSequencialSearchWords[i] = getWarmUp(timeSequencialSearchWords[i]);
-            for(int j = 0; j< threads.length; j++){
+            for (int j = 0; j < threads.length; j++) {
                 timeParaleloSearchWords[i][j] = getWarmUp(timeParaleloSearchWords[i][j]);
-
             }
         }
     }
 
-    private int[] getWarmUp(int[] time){
-        int[] timeWarmUp = new int[interactions - interactions/10];
-
-        for(int i= interactions/10; i< interactions; i++){
-            timeWarmUp[i - interactions/10] = time[i];
+    private int[] getWarmUp(int[] time) {
+        int[] timeWarmUp = new int[interactions - interactions / 10];
+        for (int i = interactions / 10; i < interactions; i++) {
+            timeWarmUp[i - interactions / 10] = time[i];
         }
         return timeWarmUp;
     }
 
-    private void removeOutliers(){
-        for(int i = 0; i< searchWords.length; i++){
+    private void removeOutliers() {
+        for (int i = 0; i < searchWords.length; i++) {
             timeSequencialSearchWords[i] = getOutliers(timeSequencialSearchWords[i]);
-            for(int j = 0; j< threads.length; j++){
+            for (int j = 0; j < threads.length; j++) {
                 timeParaleloSearchWords[i][j] = getOutliers(timeParaleloSearchWords[i][j]);
             }
         }
     }
 
-    private int[] getOutliers(int[] time){
+    private int[] getOutliers(int[] time) {
         double[] doubleArray = Arrays.stream(time).asDoubleStream().toArray();
-        
         Percentile percentile = new Percentile();
         percentile.setData(doubleArray);
         double q1 = percentile.evaluate(25);
         double q3 = percentile.evaluate(75);
-        
         double iqr = q3 - q1;
-
         double lowerBound = q1 - (1.5 * iqr);
         double upperBound = q3 + (1.5 * iqr);
-
         return Arrays.stream(time).filter(times -> times >= lowerBound && times <= upperBound).toArray();
     }
 
-    private void setAverage(){
-        for(int i = 0; i< searchWords.length; i++){
+    private void setAverage() {
+        for (int i = 0; i < searchWords.length; i++) {
             timeSequencialAvarage[i] = getAverage(timeSequencialSearchWords[i]);
-            for(int j = 0; j< threads.length; j++){
+            for (int j = 0; j < threads.length; j++) {
                 timeParaleloAvarage[i][j] = getAverage(timeParaleloSearchWords[i][j]);
             }
         }
     }
-    private float getAverage(int[] time){
+
+    private float getAverage(int[] time) {
         float sum = 0;
-        for(int i=0; i< time.length; i++){
+        for (int i = 0; i < time.length; i++) {
             sum += time[i];
         }
-
-        return sum/(time.length);
+        return sum / (time.length);
     }
 
     private void print() {
         System.out.println("Tempo Sequencial: ");
-        for(int i = 0; i< searchWords.length; i++){
+        for (int i = 0; i < searchWords.length; i++) {
             System.out.println("Palavras: " + Arrays.toString(searchWords[i]));
             System.out.println("Tempo: " + Arrays.toString(timeSequencialSearchWords[i]));
-            System.out.println("Média: " + timeSequencialAvarage[i]+" μs(Microsegundos)");
+            System.out.println("Média: " + timeSequencialAvarage[i] + " μs(Microsegundos)");
         }
-
-        for(int i = 0; i< searchWords.length; i++){
-            for(int j = 0; j< threads.length; j++){
+        for (int i = 0; i < searchWords.length; i++) {
+            for (int j = 0; j < threads.length; j++) {
                 System.out.println("Palavras: " + Arrays.toString(searchWords[i]) + " Threads: " + threads[j]);
                 System.out.println("Tempo: " + Arrays.toString(timeParaleloSearchWords[i][j]));
-                System.out.println("Média: " + timeParaleloAvarage[i][j] +" μs(Microsegundos)");
+                System.out.println("Média: " + timeParaleloAvarage[i][j] + " μs(Microsegundos)");
+            }
+        }
+
+        for(Map.Entry<String, List<Integer>> entry : wordMap.entrySet()){
+            System.out.println("Palavra: " + entry.getKey() + " - " + entry.getValue().get(1));
         }
     }
 
-   /*  private void print() {
-        System.out.println("Tempo Sequencial: ");
-        for(int i = 0; i< 30; i++){
-            System.out.print(timeSequencialSearchWords[i] + " ");
-        }
-        System.out.println();
+    private void generateGraph() {
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
-        System.out.println("Tempo Paralelo 2: ");
-        for(int i = 0; i< 30; i++){
-            System.out.print(timeParalelo2SearchWords[i] + " ");
+        for (int i = 0; i < searchWords.length; i++) {
+            dataset.addValue(timeSequencialAvarage[i], "Sequencial", "Palavras " + Arrays.toString(searchWords[i]));
+            for (int j = 0; j < threads.length; j++) {
+                dataset.addValue(timeParaleloAvarage[i][j], "Paralelo " + threads[j], "Palavras " + Arrays.toString(searchWords[i]));
+            }
         }
-        System.out.println();
 
-        System.out.println("Tempo Paralelo 4: ");
-        for(int i = 0; i< 30; i++){
-            System.out.print(timeParalelo4SearchWords[i] + " ");
-        }
-        System.out.println();
+        JFreeChart time = ChartFactory.createBarChart(
+                "Tempo de Execução por Tipo de Busca", 
+                "Busca", 
+                "Tempo (μs)", 
+                dataset
+        );
 
-        System.out.println("Tempo Paralelo 8: ");
-        for(int i = 0; i< 30; i++){
-            System.out.print(timeParalelo8SearchWords[i] + " ");
-        }
-        System.out.println();
+        JFrame frame = new JFrame("Gráfico de Desempenho");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.getContentPane().add(new ChartPanel(time));
+        frame.pack();
+        frame.setVisible(true);
     }
 
-    private void testerSearchWords() {
-        for(int i = 0; i< interactions; i++){
-            Sequencial sequencial = new Sequencial(words,searchWords);
-            timeSequencialSearchWords[i] = (int) sequencial.getTime();
+    private void generateGraph2() {
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        for (Map.Entry<String, List<Integer>> entry : wordMap.entrySet()) {
+            String key = entry.getKey();  
+            Integer value = entry.getValue().get(1); 
+            dataset.addValue(value, key, key);
         }
 
-        for(int i = 0; i< interactions; i++){
-            Paralelo paralelo = new Paralelo(2,words,searchWords);
-            timeParalelo2SearchWords[i] = (int) paralelo.getTime();
-        }
+        JFreeChart chart = ChartFactory.createBarChart(
+            "Contagem de Palavras", 
+            "Palavras", 
+            "Contagem", 
+            dataset
+    );
 
-        for(int i = 0; i< interactions; i++){
-            Paralelo paralelo = new Paralelo(4,words,searchWords);
-            timeParalelo4SearchWords[i] = (int) paralelo.getTime();
-        }
-
-        for(int i = 0; i< interactions; i++){
-            Paralelo paralelo = new Paralelo(8,words,searchWords);
-            timeParalelo8SearchWords[i] = (int) paralelo.getTime();
-        }
+        JFrame frame = new JFrame("Gráfico de Desempenho");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.getContentPane().add(new ChartPanel(chart));
+        frame.pack();
+        frame.setVisible(true);
     }
-
-    private void testerSearchWords2() {
-        for(int i = 0; i< interactions; i++){
-            Sequencial sequencial = new Sequencial(words,searchWords2);
-            timeSequencialSearchWords2[i] = (int) sequencial.getTime();
-        }
-
-        for(int i = 0; i< interactions; i++){
-            Paralelo paralelo = new Paralelo(2,words,searchWords2);
-            timeParalelo2SearchWords2[i] = (int) paralelo.getTime();
-        }
-
-        for(int i = 0; i< interactions; i++){
-            Paralelo paralelo = new Paralelo(4,words,searchWords2);
-            timeParalelo4SearchWords2[i] = (int) paralelo.getTime();
-        }
-
-        for(int i = 0; i< interactions; i++){
-            Paralelo paralelo = new Paralelo(8,words,searchWords2);
-            timeParalelo8SearchWords2[i] = (int) paralelo.getTime();
-        }
-    }
-
-    private int[] getWarmUp(int[] time){
-        int[] timeWarmUp = new int[interactions/10];
-
-        for(int i= 0; i< interactions/10; i++){
-            timeWarmUp[i] = time[i];
-        }
-
-        return timeWarmUp;
-    }
-
-    private int getAverage(int[] time){
-        int sum = 0;
-        for(int i=interactions/10; i< interactions; i++){
-            sum += time[i];
-        }
-
-        return sum/(interactions - interactions/10);
-    }
-
-*/
-    }
+    
 }
