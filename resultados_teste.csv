@@ -1,0 +1,9 @@
+Tipo,Conjunto,Threads,Tempo Médio (μs),Desvio Padrão,Speedup,Eficiência
+Sequencial,1,0,691,38,5,63,1.00,100.00
+Sequencial,2,0,655,19,8,84,1.00,100.00
+Paralelo,1,2,398,61,4,94,1,73,86,72
+Paralelo,1,4,221,19,10,90,3,13,78,14
+Paralelo,1,8,200,22,25,03,3,45,43,16
+Paralelo,2,2,380,44,4,70,1,72,86,11
+Paralelo,2,4,207,25,5,38,3,16,79,03
+Paralelo,2,8,156,88,6,75,4,18,52,20
