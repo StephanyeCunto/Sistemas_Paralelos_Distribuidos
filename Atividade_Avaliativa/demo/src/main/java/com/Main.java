@@ -6,6 +6,8 @@ public class Main {
         String[] words = pdf.getWords();
         pdf.closePDF();
 
-        Tester tester = new Tester(words);
+        PerformanceTest performanceTest = new PerformanceTest(words);
+        performanceTest.runTests();
+        performanceTest.print();
     }
 }
