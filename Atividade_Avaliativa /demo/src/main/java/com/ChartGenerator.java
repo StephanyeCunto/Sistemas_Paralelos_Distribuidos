@@ -1,19 +1,15 @@
 package com;
 
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 import java.util.Map;
 
 import javax.swing.JFrame;
 
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
+import org.jfree.chart.*;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.data.xy.*;
 
 import java.awt.*;
 
@@ -172,23 +168,31 @@ public class ChartGenerator {
 
     private void exportResultsToCSV() {
         try (FileWriter writer = new FileWriter("resultados_teste.csv")) {
-            writer.append("Tipo,Conjunto,Threads,Tempo Médio (μs),Desvio Padrão,Speedup,Eficiência\n");
-            
+            writer.append("Tipo;Conjunto;Threads;Tempo Médio (μs);Desvio Padrão;Speedup;Eficiência\n");
+    
             for (int i = 0; i < searchWords.length; i++) {
-                writer.append(String.format("Sequencial,%d,0,%.2f,%.2f,1.00,100.00\n",
-                    i+1, timeSequentialAverage[i], timeSequentialStdDev[i]));
+                writer.append(String.format("Sequencial;%d;1;%.2f;%.2f;;\n",
+                    i + 1,
+                    timeSequentialAverage[i],
+                    timeSequentialStdDev[i]
+                ));
             }
-            
-            for (int i = 0; i < searchWords.length; i++) {
+                for (int i = 0; i < searchWords.length; i++) {
                 for (int j = 0; j < threads.length; j++) {
-                    writer.append(String.format("Paralelo,%d,%d,%.2f,%.2f,%.2f,%.2f\n",
-                        i+1, threads[j], timeParallelAverage[i][j], timeParallelStdDev[i][j],
-                        speedup[i][j], efficiency[i][j] * 100));
+                    writer.append(String.format("Paralelo;%d;%d;%.2f;%.2f;%.2f;%.2f\n",
+                        i + 1,
+                        threads[j],
+                        timeParallelAverage[i][j],
+                        timeParallelStdDev[i][j],
+                        speedup[i][j],
+                        efficiency[i][j] * 100
+                    ));
                 }
             }
-            
+    
         } catch (IOException e) {
             System.err.println("Erro ao exportar resultados: " + e.getMessage());
         }
     }
+    
 }

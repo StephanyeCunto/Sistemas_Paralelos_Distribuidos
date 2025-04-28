@@ -1,9 +1,15 @@
-Tipo,Conjunto,Threads,Tempo Médio (μs),Desvio Padrão,Speedup,Eficiência
-Sequencial,1,0,691,38,5,63,1.00,100.00
-Sequencial,2,0,655,19,8,84,1.00,100.00
-Paralelo,1,2,398,61,4,94,1,73,86,72
-Paralelo,1,4,221,19,10,90,3,13,78,14
-Paralelo,1,8,200,22,25,03,3,45,43,16
-Paralelo,2,2,380,44,4,70,1,72,86,11
-Paralelo,2,4,207,25,5,38,3,16,79,03
-Paralelo,2,8,156,88,6,75,4,18,52,20
+Tipo;Conjunto;Threads;Tempo Médio (μs);Desvio Padrão;Speedup;Eficiência
+Sequencial;1;1;676,63;4,77;;
+Sequencial;2;1;652,07;3,99;;
+Paralelo;1;2;398,37;4,01;1,70;84,92
+Paralelo;1;4;216,08;2,69;3,13;78,28
+Paralelo;1;8;192,11;22,26;3,52;44,03
+Paralelo;1;16;181,69;6,47;3,72;23,28
+Paralelo;1;32;215,63;12,77;3,14;9,81
+Paralelo;1;64;295,85;11,08;2,29;3,57
+Paralelo;2;2;380,59;2,78;1,71;85,67
+Paralelo;2;4;206,44;2,21;3,16;78,96
+Paralelo;2;8;152,96;2,51;4,26;53,29
+Paralelo;2;16;176,33;10,11;3,70;23,11
+Paralelo;2;32;210,17;12,15;3,10;9,70
+Paralelo;2;64;294,64;17,96;2,21;3,46

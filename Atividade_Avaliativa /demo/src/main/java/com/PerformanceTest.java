@@ -10,7 +10,7 @@ public class PerformanceTest {
             { "clarissa", "letter", "lovelace", "virtue", "dear", "miss" },
             { "eita", "bacana", "vixe", "forbidden", "indignation", "oppression" }
     };
-    private int[] threads = { 2, 4, 8 };
+    private int[] threads = { 2, 4, 8, 16, 32, 64 };
     private int iterations = 30;
 
     private DataProcessor dataProcessor ;

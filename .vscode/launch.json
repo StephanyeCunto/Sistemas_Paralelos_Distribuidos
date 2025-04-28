@@ -3,6 +3,12 @@
   "configurations": [
     {
       "type": "java",
+      "name": "Main",
+      "request": "launch",
+      "mainClass": "com.Main"
+    },
+    {
+      "type": "java",
       "name": "GraphTester",
       "request": "launch",
       "mainClass": "com.GraphTester",
