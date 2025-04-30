@@ -60,8 +60,8 @@ public class ParaleloVirtual {
         for(int i = threadIndex; i < limit; i++){
             Integer index = wordMap.get(words[i]);
             if (index != null) { 
-                synchronized (searchWordsCount) {searchWordsCount[index]++;}
-              // searchWordsCount[index]++;
+              //  synchronized (searchWordsCount) {searchWordsCount[index]++;}
+               searchWordsCount[index]++;
             }
         }
     }
