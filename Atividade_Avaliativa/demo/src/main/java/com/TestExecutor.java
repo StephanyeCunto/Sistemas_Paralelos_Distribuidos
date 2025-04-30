@@ -44,7 +44,7 @@ public class TestExecutor {
         return timeParallelSearchWords;
     }
 
-    public int[][][] runTestsParaleloTeste(){
+    public int[][][] runTestsParaleloVirtual(){
         int[][][] timeParallelSearchWords = new int[this.searchWords.length][this.threads.length][this.iterations];
 
         for (int i = 0; i < this.searchWords.length; i++) {

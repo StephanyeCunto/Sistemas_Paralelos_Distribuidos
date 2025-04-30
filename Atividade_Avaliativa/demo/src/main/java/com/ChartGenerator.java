@@ -20,19 +20,27 @@ public class ChartGenerator {
     private final double[][] timeParallelAverage;
     private final double[] timeSequentialStdDev;
     private final double[][] timeParallelStdDev;
+    private final double[][] timeParallelVirtualAverage;
+    private final double[][] timeParallelVirtualStdDev;
     private final double[][] speedup;
     private final double[][] efficiency;
+    private final double[][] speedupVirtual;
+    private final double[][] efficiencyVirtual;
     private final Map<String, List<Integer>> wordMap;
 ;
-    public ChartGenerator(String[][] searchWords, int[] threads,double[] timeSequentialAverage, double[][] timeParallelAverage,double[] timeSequentialStdDev, double[][] timeParallelStdDev,double[][] speedup, double[][] efficiency,Map<String, List<Integer>> wordMap) {
+    public ChartGenerator(String[][] searchWords, int[] threads,double[] timeSequentialAverage, double[][] timeParallelAverage,double[] timeSequentialStdDev, double[][] timeParallelStdDev,double[][] timeParallelVirtualAverage,double[][] timeParallelVirtualStdDev,double[][] speedup, double[][] efficiency,double[][] speedupVirtual,double[][] efficiencyVirtual,Map<String, List<Integer>> wordMap) {
         this.searchWords = searchWords;
         this.threads = threads;
         this.timeSequentialAverage = timeSequentialAverage;
         this.timeParallelAverage = timeParallelAverage;
         this.timeSequentialStdDev = timeSequentialStdDev;
         this.timeParallelStdDev = timeParallelStdDev;
+        this.timeParallelVirtualAverage = timeParallelVirtualAverage;
+        this.timeParallelVirtualStdDev = timeParallelVirtualStdDev;
         this.speedup = speedup;
         this.efficiency = efficiency;
+        this.speedupVirtual = speedupVirtual;
+        this.efficiencyVirtual = efficiencyVirtual;
         this.wordMap = wordMap;
 
         generateGraphs();
@@ -167,7 +175,7 @@ public class ChartGenerator {
     }
 
     private void exportResultsToCSV() {
-        try (FileWriter writer = new FileWriter("resultados_teste.csv")) {
+        try (FileWriter writer = new FileWriter("Atividade_Avaliativa/resultados_teste.csv")) {
             writer.append("Tipo;Conjunto;Threads;Tempo Médio (μs);Desvio Padrão;Speedup;Eficiência\n");
     
             for (int i = 0; i < searchWords.length; i++) {
@@ -177,7 +185,7 @@ public class ChartGenerator {
                     timeSequentialStdDev[i]
                 ));
             }
-                for (int i = 0; i < searchWords.length; i++) {
+            for (int i = 0; i < searchWords.length; i++) {
                 for (int j = 0; j < threads.length; j++) {
                     writer.append(String.format("Paralelo;%d;%d;%.2f;%.2f;%.2f;%.2f\n",
                         i + 1,
@@ -189,7 +197,18 @@ public class ChartGenerator {
                     ));
                 }
             }
-    
+            for (int i = 0; i < searchWords.length; i++) {
+                for (int j = 0; j < threads.length; j++) {
+                    writer.append(String.format("Paralelo Virtual;%d;%d;%.2f;%.2f;%.2f;%.2f\n",
+                        i + 1,
+                        threads[j],
+                        timeParallelVirtualAverage[i][j],
+                        timeParallelVirtualStdDev[i][j],
+                        speedupVirtual[i][j],
+                        efficiencyVirtual[i][j] * 100
+                    ));
+                }
+            }
         } catch (IOException e) {
             System.err.println("Erro ao exportar resultados: " + e.getMessage());
         }

@@ -21,15 +21,15 @@ public class DataProcessor {
     private final int searchWordsCount;
     private final int threads[];
 
-    private int[][][] timeParallelTestSearchWords;
-    private double[][] timeParallelTestAverage;
-    private double[][] timeParallelTestStdDev;
+    private int[][][] timeParallelVirtualSearchWords;
+    private double[][] timeParallelVirtualAverage;
+    private double[][] timeParallelVirtualStdDev;
 
-    private double[][] speedupTested;
-    private double[][] efficiencyTested;
+    private double[][] speedupVirtual;
+    private double[][] efficiencyVirtual;
 
 
-    public DataProcessor(int[][] timeSequentialSearchWords, int[][][] timeParallelSearchWords, int iterations, int searchWordsCount, int[] threads, int[][][] timeParallelTestSearchWords) {
+    public DataProcessor(int[][] timeSequentialSearchWords, int[][][] timeParallelSearchWords, int iterations, int searchWordsCount, int[] threads, int[][][] timeParallelVirtualSearchWords) {
         this.timeSequentialSearchWords = timeSequentialSearchWords;
         this.timeParallelSearchWords = timeParallelSearchWords;
         this.iterations = iterations;
@@ -43,11 +43,11 @@ public class DataProcessor {
         this.speedup = new double[searchWordsCount][threads.length];
         this.efficiency = new double[searchWordsCount][threads.length];
 
-        this.timeParallelTestSearchWords = timeParallelTestSearchWords;
-        this.timeParallelTestAverage = new double[searchWordsCount][threads.length];
-        this.timeParallelTestStdDev = new double[searchWordsCount][threads.length];
-        this.speedupTested = new double[searchWordsCount][threads.length];
-        this.efficiencyTested = new double[searchWordsCount][threads.length];
+        this.timeParallelVirtualSearchWords = timeParallelVirtualSearchWords;
+        this.timeParallelVirtualAverage = new double[searchWordsCount][threads.length];
+        this.timeParallelVirtualStdDev = new double[searchWordsCount][threads.length];
+        this.speedupVirtual = new double[searchWordsCount][threads.length];
+        this.efficiencyVirtual = new double[searchWordsCount][threads.length];
         
         removeWarmUp();
         removeOutliers();
@@ -69,8 +69,8 @@ public class DataProcessor {
                 this.timeParallelSearchWords[i][j] = newParallel;
 
                 int[] newParallelTest = new int[newSize];
-                System.arraycopy(this.timeParallelTestSearchWords[i][j], warmupCount, newParallelTest, 0, newSize);
-                this.timeParallelTestSearchWords[i][j] = newParallelTest;
+                System.arraycopy(this.timeParallelVirtualSearchWords[i][j], warmupCount, newParallelTest, 0, newSize);
+                this.timeParallelVirtualSearchWords[i][j] = newParallelTest;
             }
         }
     }
@@ -82,7 +82,7 @@ public class DataProcessor {
             for (int j = 0; j < this.threads.length; j++) {
                 this.timeParallelSearchWords[i][j] = removeOutliersFromArray(timeParallelSearchWords[i][j]);
 
-                this.timeParallelTestSearchWords[i][j] = removeOutliersFromArray(timeParallelTestSearchWords[i][j]);
+                this.timeParallelVirtualSearchWords[i][j] = removeOutliersFromArray(timeParallelVirtualSearchWords[i][j]);
             }
         }
     }
@@ -119,13 +119,13 @@ public class DataProcessor {
                 this.timeParallelAverage[i][j] = calculateAverage(parallelDouble);
                 this.timeParallelStdDev[i][j] = stdDev.evaluate(parallelDouble);
 
-                double[] parallelTestDouble = Arrays.stream(timeParallelTestSearchWords[i][j])
+                double[] parallelTestDouble = Arrays.stream(timeParallelVirtualSearchWords[i][j])
                                                     .asDoubleStream().toArray();
-                this.timeParallelTestAverage[i][j] = calculateAverage(parallelTestDouble);
-                this.timeParallelTestStdDev[i][j] = stdDev.evaluate(parallelTestDouble);
+                this.timeParallelVirtualAverage[i][j] = calculateAverage(parallelTestDouble);
+                this.timeParallelVirtualStdDev[i][j] = stdDev.evaluate(parallelTestDouble);
 
-                this.speedupTested[i][j] = this.timeSequentialAverage[i] / this.timeParallelTestAverage[i][j];
-                this.efficiencyTested[i][j] = this.speedupTested[i][j] / this.threads[j];
+                this.speedupVirtual[i][j] = this.timeSequentialAverage[i] / this.timeParallelVirtualAverage[i][j];
+                this.efficiencyVirtual[i][j] = this.speedupVirtual[i][j] / this.threads[j];
                 
                 this.speedup[i][j] = this.timeSequentialAverage[i] / this.timeParallelAverage[i][j];
                 this.efficiency[i][j] = this.speedup[i][j] / this.threads[j];

@@ -3,6 +3,20 @@
   "configurations": [
     {
       "type": "java",
+      "name": "SystemProcessControl",
+      "request": "launch",
+      "mainClass": "com.SystemProcessControl",
+      "projectName": "demo"
+    },
+    {
+      "type": "java",
+      "name": "ProcessManager",
+      "request": "launch",
+      "mainClass": "com.ProcessManager",
+      "projectName": "demo"
+    },
+    {
+      "type": "java",
       "name": "Main",
       "request": "launch",
       "mainClass": "com.Main"
