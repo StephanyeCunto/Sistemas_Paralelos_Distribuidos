@@ -7,9 +7,9 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
 public class OpenPDF {
-    private String filePath;
-    private String[] words;
+    private final String filePath;
     private PDDocument document;
+    private String[] words;
 
     public OpenPDF(String filePath) {
         this.filePath = filePath;

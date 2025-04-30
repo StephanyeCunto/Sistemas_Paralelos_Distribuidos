@@ -17,11 +17,19 @@ public class DataProcessor {
     private double[][] timeParallelStdDev;
     private double[][] speedup;
     private double[][] efficiency;
-    private int iterations;
-    private int searchWordsCount;
-    private int threads[];
+    private final int iterations;
+    private final int searchWordsCount;
+    private final int threads[];
 
-    public DataProcessor(int[][] timeSequentialSearchWords, int[][][] timeParallelSearchWords, int iterations, int searchWordsCount, int[] threads) {
+    private int[][][] timeParallelTestSearchWords;
+    private double[][] timeParallelTestAverage;
+    private double[][] timeParallelTestStdDev;
+
+    private double[][] speedupTested;
+    private double[][] efficiencyTested;
+
+
+    public DataProcessor(int[][] timeSequentialSearchWords, int[][][] timeParallelSearchWords, int iterations, int searchWordsCount, int[] threads, int[][][] timeParallelTestSearchWords) {
         this.timeSequentialSearchWords = timeSequentialSearchWords;
         this.timeParallelSearchWords = timeParallelSearchWords;
         this.iterations = iterations;
@@ -35,6 +43,12 @@ public class DataProcessor {
         this.speedup = new double[searchWordsCount][threads.length];
         this.efficiency = new double[searchWordsCount][threads.length];
 
+        this.timeParallelTestSearchWords = timeParallelTestSearchWords;
+        this.timeParallelTestAverage = new double[searchWordsCount][threads.length];
+        this.timeParallelTestStdDev = new double[searchWordsCount][threads.length];
+        this.speedupTested = new double[searchWordsCount][threads.length];
+        this.efficiencyTested = new double[searchWordsCount][threads.length];
+        
         removeWarmUp();
         removeOutliers();
         calculateStatistics();
@@ -53,10 +67,12 @@ public class DataProcessor {
                 int[] newParallel = new int[newSize];
                 System.arraycopy(this.timeParallelSearchWords[i][j], warmupCount, newParallel, 0, newSize);
                 this.timeParallelSearchWords[i][j] = newParallel;
+
+                int[] newParallelTest = new int[newSize];
+                System.arraycopy(this.timeParallelTestSearchWords[i][j], warmupCount, newParallelTest, 0, newSize);
+                this.timeParallelTestSearchWords[i][j] = newParallelTest;
             }
         }
-        
-        iterations = newSize;
     }
 
         private void removeOutliers() {
@@ -65,6 +81,8 @@ public class DataProcessor {
             
             for (int j = 0; j < this.threads.length; j++) {
                 this.timeParallelSearchWords[i][j] = removeOutliersFromArray(timeParallelSearchWords[i][j]);
+
+                this.timeParallelTestSearchWords[i][j] = removeOutliersFromArray(timeParallelTestSearchWords[i][j]);
             }
         }
     }
@@ -100,6 +118,14 @@ public class DataProcessor {
                                                .asDoubleStream().toArray();
                 this.timeParallelAverage[i][j] = calculateAverage(parallelDouble);
                 this.timeParallelStdDev[i][j] = stdDev.evaluate(parallelDouble);
+
+                double[] parallelTestDouble = Arrays.stream(timeParallelTestSearchWords[i][j])
+                                                    .asDoubleStream().toArray();
+                this.timeParallelTestAverage[i][j] = calculateAverage(parallelTestDouble);
+                this.timeParallelTestStdDev[i][j] = stdDev.evaluate(parallelTestDouble);
+
+                this.speedupTested[i][j] = this.timeSequentialAverage[i] / this.timeParallelTestAverage[i][j];
+                this.efficiencyTested[i][j] = this.speedupTested[i][j] / this.threads[j];
                 
                 this.speedup[i][j] = this.timeSequentialAverage[i] / this.timeParallelAverage[i][j];
                 this.efficiency[i][j] = this.speedup[i][j] / this.threads[j];

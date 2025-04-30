@@ -6,9 +6,11 @@ import lombok.Getter;
 
 @Getter
 public class Sequencial {
-    private String[] words;
+    private final String[] words;    
+    private final Map<String, Integer> wordMap;
+
+
     private int[] searchWordsCount;
-    private Map<String, Integer> wordMap;
     private long startTime;
     private long endTime;
     private long time;
@@ -27,11 +29,11 @@ public class Sequencial {
     }
 
     private void setStartTime() {
-        this.startTime = System.nanoTime()/10000;
+        this.startTime = System.nanoTime()/1000;
     }
 
     private void setEndTime() {
-        this.endTime = System.nanoTime()/10000;
+        this.endTime = System.nanoTime()/1000;
         this.time = endTime - startTime;
     }
 
@@ -43,4 +45,6 @@ public class Sequencial {
             }
         }
     }
+
+    
 }

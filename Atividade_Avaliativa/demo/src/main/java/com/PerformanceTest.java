@@ -4,14 +4,15 @@ import java.util.List;
 import java.util.Map;
 
 public class PerformanceTest {
-    private String[] words;
+    private final String[] words;
+    private final int[] threads = { 1, 2, 4, 8 };
+    private final int iterations = 100;
     
-    private String[][] searchWords = {
+    private final String[][] searchWords = {
             { "clarissa", "letter", "lovelace", "virtue", "dear", "miss" },
             { "eita", "bacana", "vixe", "forbidden", "indignation", "oppression" }
     };
-    private int[] threads = { 2, 4, 8, 16, 32, 64 };
-    private int iterations = 30;
+
 
     private DataProcessor dataProcessor ;
 
@@ -23,6 +24,7 @@ public class PerformanceTest {
         TestExecutor testExecutor = new TestExecutor(this.words, this.searchWords, this.iterations, this.threads);
         int[][] timeSequentialSearchWords = testExecutor.runTestsSequencial();
         int[][][] timeParallelSearchWords = testExecutor.runTestsParalelo();
+        int[][][] timeParallelTesteSearchWords = testExecutor.runTestsParaleloTeste();
 
         Map<String, List<Integer>> wordMap = testExecutor.getWordsCount();
 
@@ -30,14 +32,15 @@ public class PerformanceTest {
             System.out.println("Palavras: " +  entry.getKey()+ " "+entry.getValue().get(1));
         }
 
-        dataProcessor = new DataProcessor(timeSequentialSearchWords, timeParallelSearchWords, this.iterations, this.searchWords.length, this.threads);
-        ChartGenerator chartGenerator = new ChartGenerator(this.searchWords,this.threads,dataProcessor.getTimeSequentialAverage(), dataProcessor.getTimeParallelAverage(),   
+       dataProcessor = new DataProcessor(timeSequentialSearchWords, timeParallelSearchWords, this.iterations, this.searchWords.length, this.threads, timeParallelTesteSearchWords);
+      /*   ChartGenerator chartGenerator = new ChartGenerator(this.searchWords,this.threads,dataProcessor.getTimeSequentialAverage(), dataProcessor.getTimeParallelAverage(),   
             dataProcessor.getTimeSequentialStdDev(),dataProcessor.getTimeParallelStdDev(),     dataProcessor.getSpeedup(),dataProcessor.getEfficiency(),wordMap
         );
+        */
     }
 
     public void print() {
-        System.out.println("\n================ RESULTADOS DE PERFORMANCE ================\n");
+        System.out.println("================================================= RESULTADOS DE PERFORMANCE =======================================================");
         
         for (int i = 0; i < this.searchWords.length; i++) {
             String[] currentWordSet = this.searchWords[i];
@@ -48,13 +51,13 @@ public class PerformanceTest {
                             dataProcessor.getTimeSequentialAverage()[i], 
                             dataProcessor.getTimeSequentialStdDev()[i]);
             
-            System.out.println("├───────────────┼─────────────────────────┼──────────────────────────┼─────────────────┼───────────────┤");
-            
-            System.out.println("│   PARALELO    │       TEMPO MÉDIO       │      DESVIO PADRÃO       │     SPEEDUP     │   EFICIÊNCIA  │");
-            System.out.println("├───────────────┼─────────────────────────┼──────────────────────────┼─────────────────┼───────────────┤");
-            
+           
+                            System.out.println("├───────────────┼─────────────────────────┼──────────────────────────┼───────────────────┼──────────────────────────────┤");
+                            System.out.println("│   PARALELO    │       TEMPO MÉDIO       │      DESVIO PADRÃO       │      SPEEDUP      │          EFICIÊNCIA          │");
+                            System.out.println("├───────────────┼─────────────────────────┼──────────────────────────┼───────────────────┼──────────────────────────────┤");
+
             for (int j = 0; j < this.threads.length; j++) {
-                System.out.printf("│ %2d Threads    │ %8.2f μs            │ %8.2f μs             │ %6.2fx        │ %6.2f%%      │\n", 
+                System.out.printf("│ %2d Threads    │ %8.2f μs             │ %8.2f μs              │ %6.2fx           │  %6.2f%%                     │\n", 
                               this.threads[j],
                               dataProcessor.getTimeParallelAverage()[i][j],
                               dataProcessor.getTimeParallelStdDev()[i][j],
@@ -62,10 +65,31 @@ public class PerformanceTest {
                               dataProcessor.getEfficiency()[i][j] * 100);
             }
             
-            System.out.println("└───────────────┴─────────────────────────┴──────────────────────────┴─────────────────┴───────────────┘");
+            System.out.println("└───────────────┴─────────────────────────┴──────────────────────────┴───────────────────┴──────────────────────────────┘");
             System.out.println();
+
+            System.out.println("================================================= THREAD VIRTUAL =======================================================");
+
+
+            System.out.println("├───────────────┼─────────────────────────┼──────────────────────────┼───────────────────┼──────────────────────────────┤");
+            System.out.println("│   PARALELO    │       TEMPO MÉDIO       │      DESVIO PADRÃO       │      SPEEDUP      │          EFICIÊNCIA          │");
+            System.out.println("├───────────────┼─────────────────────────┼──────────────────────────┼───────────────────┼──────────────────────────────┤");
+            
+            for (int j = 0; j < this.threads.length; j++) {
+                System.out.printf("│ %2d Threads    │ %8.2f μs             │ %8.2f μs              │ %6.2fx           │ %6.2f%%                 │\n", 
+                              this.threads[j],
+                              dataProcessor.getTimeParallelTestAverage()[i][j],
+                              dataProcessor.getTimeParallelTestStdDev()[i][j],
+                              dataProcessor.getSpeedupTested()[i][j],
+                              dataProcessor.getEfficiencyTested()[i][j] * 100);
+            }
+            
+            System.out.println("└───────────────┴─────────────────────────┴──────────────────────────┴───────────────────┴──────────────────────────────┘");
+            System.out.println();
+
+
         }
         
-        System.out.println("==========================================================");
+        System.out.println("========================================================================================================");
     }
 }

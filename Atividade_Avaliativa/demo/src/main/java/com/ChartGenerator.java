@@ -14,15 +14,15 @@ import org.jfree.data.xy.*;
 import java.awt.*;
 
 public class ChartGenerator {
-    private String[][] searchWords;
-    private int[] threads;
-    private double[] timeSequentialAverage;
-    private double[][] timeParallelAverage;
-    private double[] timeSequentialStdDev;
-    private double[][] timeParallelStdDev;
-    private double[][] speedup;
-    private double[][] efficiency;
-    private Map<String, List<Integer>> wordMap;
+    private final String[][] searchWords;
+    private final int[] threads;
+    private final double[] timeSequentialAverage;
+    private final double[][] timeParallelAverage;
+    private final double[] timeSequentialStdDev;
+    private final double[][] timeParallelStdDev;
+    private final double[][] speedup;
+    private final double[][] efficiency;
+    private final Map<String, List<Integer>> wordMap;
 ;
     public ChartGenerator(String[][] searchWords, int[] threads,double[] timeSequentialAverage, double[][] timeParallelAverage,double[] timeSequentialStdDev, double[][] timeParallelStdDev,double[][] speedup, double[][] efficiency,Map<String, List<Integer>> wordMap) {
         this.searchWords = searchWords;

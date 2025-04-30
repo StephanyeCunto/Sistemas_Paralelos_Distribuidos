@@ -82,6 +82,15 @@ classDiagram
         +getTime() long
         +getSearchWordsCount() int[]
     }
+
+    class ParaleloVirtual {
+        -int threads
+        -String[] words
+        -int[] searchWordsCount
+        -long time
+        +getTime() long
+        +getSearchWordsCount() int[]
+    }
     
     class DataProcessor {
         -double[] timeSequentialAverage
@@ -112,11 +121,14 @@ classDiagram
     PerformanceTest --> TestExecutor : utiliza
     TestExecutor --> Sequencial : utiliza
     TestExecutor --> Paralelo : utiliza
+    TestExecutor --> ParaleloVirtual : utiliza
     PerformanceTest --> DataProcessor : utiliza
     DataProcessor --> ChartGenerator : fornece dados
     PerformanceTest --> ChartGenerator : utiliza
     Sequencial --> TestExecutor : retorna resultados
     Paralelo --> TestExecutor : retorna resultados
+    ParaleloVirtual --> TestExecutor : retorna resultados
+
 ```
 
 ### Detalhamento das Classes

@@ -2,10 +2,11 @@ package com;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import lombok.Getter;
 
 @Getter
-public class Paralelo {
+public class ParaleloVirtual {
     private final int threads;
     private final int wordsPerThread;
     private final String[] words;
@@ -16,7 +17,7 @@ public class Paralelo {
     private long endTime;
     private long time;
 
-    public Paralelo(int threads,String[] words,String[] searchWords) {
+    public ParaleloVirtual(int threads,String[] words,String[] searchWords){
         this.threads = threads;
         this.words = words;
         this.wordMap = new HashMap<>();
@@ -40,25 +41,11 @@ public class Paralelo {
     }
 
     private void startThreads(){
-        Thread[] thread = new Thread[threads];
-
-        for (int i = 0; i < threads; i++) {
-            int index = i;
-            thread[i] = new Thread(()->{
-                searchWords(index);
+        for (int i = 0; i < threads; i++){
+            int indice = i;
+            Thread.startVirtualThread(() -> {
+                searchWords(indice);
             });
-        }
-
-        for (int i = 0; i < threads; i++) {
-            thread[i].start();
-        }
-        
-        for (int i = 0; i < threads; i++) {
-            try {
-                thread[i].join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
     }
 
