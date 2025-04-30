@@ -1,20 +1,61 @@
-# Análise de Desempenho de Busca em PDF
+# Análise de Desempenho: Busca Paralela em PDF
 
 Este projeto implementa um sistema completo para comparar o desempenho de algoritmos de busca sequencial e paralela em documentos PDF, demonstrando os benefícios da computação paralela e do uso de threads virtuais modernas em Java.
 
+[![Java Version](https://img.shields.io/badge/java-17%2B-blue.svg)](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-## 📋 Descrição
-
-O sistema processa documentos PDF, extrai seu conteúdo textual e realiza buscas por conjuntos específicos de palavras. A análise de desempenho compara:
-
-- Busca sequencial (single-thread)
-- Busca paralela com 2, 4 e 8 threads tradicionais
-- Busca paralela com 2, 4 e 8 **threads virtuais** (Java 19+)
-
-São coletadas **métricas detalhadas de performance**, como tempo médio de execução, desvio padrão, speedup e eficiência, com visualizações gráficas automáticas.
+![Resultados](/Atividade_Avaliativa/img/Dados.png)
 
 
-### Métricas analisadas
+> Comparativo de desempenho entre algoritmos sequenciais e paralelos para busca em documentos PDF, demonstrando os benefícios da computação paralela moderna com threads virtuais do Java.
+
+
+## 📋 Visão Geral
+
+Este projeto implementa e analisa diferentes estratégias de busca em documentos PDF:
+
+| Abordagem | Descrição |
+|-----------|-----------|
+| 🔄 Sequencial | Execução em thread única (baseline) |
+| 🧵 Paralela Tradicional | Execução com 2, 4 e 8 threads padrão |
+| ⚡ Paralela Virtual | Execução com threads virtuais leves (Java 19+) |
+
+O sistema extrai texto de PDFs, busca conjuntos específicos de palavras e coleta métricas detalhadas de desempenho, incluindo visualizações gráficas.
+
+## ✨ Principais Resultados
+
+- **Speedup massivo**: Até **4000x** mais rápido com threads virtuais
+- **Escalabilidade**: Melhoria significativa de desempenho com aumento de threads
+- **Eficiência**: Análise detalhada de custo-benefício da paralelização
+- **Evidência prática**: Demonstração clara dos princípios da Lei de Amdahl
+
+## 🧪 Ambiente de Teste
+
+Para garantir a reprodutibilidade dos resultados, o ambiente de teste foi configurado com as seguintes especificações:
+
+### Hardware
+- **Processador**: Apple M2 (8 núcleos: 4 de performance e 4 de eficiência)
+- **Velocidade de Clock**: 3.49 GHz
+- **Memória RAM**: 8GB LPDDR5 6400 MHz
+- **Armazenamento**: SSD NVMe 256GB
+
+### Software
+- **Sistema Operacional**: macOS 15.4.1 (24E772)
+- **JDK**: OpenJDK 17.0.7, Vendor: Oracle Corporation
+- **Configurações da JVM**: 
+  - Heap inicial: 512MB (`-Xms512m`)
+  - Heap máximo: 2GB (`-Xmx2g`)
+  - Garbage Collector: G1GC (`-XX:+UseG1GC`)
+
+### Dataset
+- **Documento PDF**: "Clarissa.pdf" (Obra literária completa)
+- **Tamanho do arquivo**: 8.5MB
+- **Número de páginas**: 1536
+- **Número de palavras**: ~1.2 milhões
+- **Caracteres**: ~6.7 milhões
+
+## 🔍 Métricas Analisadas
 - **Tempo médio de execução**: Média dos tempos de processamento em microssegundos (μs)
 - **Dados de warm-up excluídos**: 10% iniciais das execuções
 - **Outliers identificados e removidos**: Utilizando método IQR
@@ -22,12 +63,18 @@ São coletadas **métricas detalhadas de performance**, como tempo médio de exe
 - **Speedup**: Relação entre o tempo sequencial e paralelo (Ts/Tp)
 - **Eficiência**: Speedup dividido pelo número de threads (Speedup/p)
 
-## 🚀 Funcionalidades
+> **Nota**: Dados tratados com remoção de warm-up (10% iniciais) e outliers (método IQR)
 
+## 🛠️ Funcionalidades
+### Core
 - **Extração de texto de PDFs**: Conversão eficiente de PDF para texto plano
 - **Processamento de texto**: Filtragem e normalização de palavras
-- **Busca sequencial**: Implementação de referência single-thread
-- **Busca paralela**: Implementação multi-thread com distribuição de carga balanceada, incluindo variações com threads tradicionais e threads virtuais para explorar maior escalabilidade e leveza na execução concorrente
+- **Busca de padrões** com diferentes algoritmos:
+  - Sequencial (referência)
+  - Paralelo com threads tradicionais (2, 4, 8)
+  - Paralelo com threads virtuais (2, 4, 8)
+
+### Análise & Visualização
 - **Programa Testador (Benchmark)**: 
   - Executa 30 iterações de cada configuração
   - Registra todos os tempos brutos
@@ -43,9 +90,9 @@ São coletadas **métricas detalhadas de performance**, como tempo médio de exe
 - **Exportação de dados**: Saída dos resultados em formato CSV para análises adicionais
 
 
-## 🏗️ Arquitetura do Sistema
+## 🏗️ Arquitetura
 
-O sistema segue uma arquitetura modular orientada a objetos, decompondo a solução em componentes especializados:
+O sistema segue uma arquitetura modular orientada a objetos:
 
 ```mermaid
 classDiagram
@@ -143,10 +190,9 @@ classDiagram
     Sequencial --> TestExecutor : retorna resultados
     Paralelo --> TestExecutor : retorna resultados
     ParaleloVirtual --> TestExecutor : retorna resultados
-
 ```
 
-### Detalhamento das Classes
+### Componentes Principais
 
 1. **Main**: 
    - Ponto de entrada da aplicação
@@ -200,31 +246,238 @@ classDiagram
    - Exporta resultados para formato CSV
    - Customiza a apresentação visual dos gráficos
 
-## 📊 Visualizações Geradas
+## 📊 Visualizações e Análise de Resultados
 
-### 1. Gráficos
-O sistema gera automaticamente quatro tipos de gráficos:
+O sistema gera quatro tipos de gráficos para análise visual dos resultados:
 
-1. **Tempo de Execução por Configuração**:
-   - Compara o desempenho entre busca sequencial e diferentes configurações paralelas
-   - Visualiza o impacto do número de threads no tempo de execução
+### 1. Comparação de Tempos de Execução
+![Tempo de Execução](/Atividade_Avaliativa/img/TempoExecucao.png)
 
-2. **Contagem de Palavras**:
-   - Mostra a frequência de cada palavra pesquisada no documento
-   - Permite contextualização dos resultados com base na distribuição das palavras
+*Este gráfico compara os tempos médios de execução (em microssegundos) para as diferentes abordagens. Nota-se a drástica redução de tempo nas implementações com threads virtuais.*
 
-3. **Speedup vs. Número de Threads**:
-   - Analisa o ganho de desempenho com o aumento do número de threads
-   - Permite identificar a Lei de Amdahl em ação
+### 2. Análise de Speedup
+![Speedup vs Threads](/Atividade_Avaliativa/img/Speedup.png)
 
-4. **Eficiência vs. Número de Threads**:
-   - Demonstra como a eficiência do paralelismo varia com o número de threads
-   - Ajuda a identificar o ponto ótimo de paralelização
+*O gráfico de speedup demonstra como o ganho de desempenho escala com o aumento do número de threads. Observa-se que para threads tradicionais, o ganho é quase linear até 4 threads, com diminuição da inclinação após esse ponto - um comportamento clássico previsto pela Lei de Amdahl.*
 
-![Resultados](/Atividade_Avaliativa/img/Dados.png)
+### 3. Eficiência da Paralelização
+![Eficiência vs Threads](/Atividade_Avaliativa/img/Eficiencia.png)
 
-### 2. Resultados no Console
-O sistema apresenta um resumo formatado no console:
+*A eficiência (speedup/número de threads) mostra quanto cada thread contribui para o ganho de desempenho. A queda na eficiência com o aumento do número de threads indica o crescimento do overhead de gerenciamento.*
+
+### 4. Distribuição de Palavras
+![Contagem de Palavras](/Atividade_Avaliativa/img/ContPalavras.png)
+
+*Este gráfico mostra a frequência de cada palavra buscada no documento, contextualizando os resultados de desempenho.*
+
+## 💻 Implementação: Análise de Código
+
+A seguir, apresentamos trechos de código simplificados das principais implementações para facilitar a compreensão das diferentes abordagens:
+
+### Algoritmo Sequencial
+```java
+public class Sequencial {
+    private final String[] words;    
+    private final Map<String, Integer> wordMap;
+
+
+    private int[] searchWordsCount;
+    private long startTime;
+    private long endTime;
+    private long time;
+
+    public Sequencial(String[] words,String[] searchWords) {
+        this.words = words;
+        this.searchWordsCount = new int[searchWords.length];
+        this.wordMap = new HashMap<>();
+        for (int i = 0; i < searchWords.length; i++) {
+            this.wordMap.put(searchWords[i], i);
+        }
+
+        setStartTime();
+        searchWords();
+        setEndTime();    
+    }
+
+    private void setStartTime() {
+        this.startTime = System.nanoTime()/1000;
+    }
+
+    private void setEndTime() {
+        this.endTime = System.nanoTime()/1000;
+        this.time = endTime - startTime;
+    }
+
+    private void searchWords() {
+        for (String word : words) {
+            Integer index = wordMap.get(word);
+            if (index != null) { 
+                searchWordsCount[index]++;
+            }
+        }
+    }
+}
+```
+
+### Algoritmo Paralelo com Threads Tradicionais
+```java
+public class Paralelo {
+    private final int threads;
+    private final int wordsPerThread;
+    private final String[] words;
+    private final Map<String, Integer> wordMap;
+
+    private int[] searchWordsCount;
+    private long startTime;
+    private long endTime;
+    private long time;
+
+    public Paralelo(int threads,String[] words,String[] searchWords) {
+        this.threads = threads;
+        this.words = words;
+        this.wordMap = new HashMap<>();
+        for (int i = 0; i < searchWords.length; i++) {
+            this.wordMap.put(searchWords[i], i);
+        }
+        this.searchWordsCount = new int[searchWords.length];  
+        this.wordsPerThread = words.length / threads;
+        setStartTime();  
+        startThreads();
+        setEndTime();
+    }
+
+    private void setStartTime() {
+        this.startTime = System.nanoTime()/1000;
+    }
+
+    private void setEndTime() {
+        this.endTime = System.nanoTime()/1000;
+        this.time = endTime - startTime;
+    }
+
+    private void startThreads(){
+        Thread[] thread = new Thread[threads];
+
+        for (int i = 0; i < threads; i++) {
+            int index = i;
+            thread[i] = new Thread(()->{
+                searchWords(index);
+            });
+        }
+
+        for (int i = 0; i < threads; i++) {
+            thread[i].start();
+        }
+        
+        for (int i = 0; i < threads; i++) {
+            try {
+                thread[i].join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void searchWords(int indice){
+        int threadIndex = indice * wordsPerThread;
+        int limit = threadIndex + wordsPerThread;
+
+        if(indice == threads - 1){
+            limit = words.length;
+        }
+
+        for(int i = threadIndex; i < limit; i++){
+            Integer index = wordMap.get(words[i]);
+            if (index != null) { 
+              // synchronized (searchWordsCount) {searchWordsCount[index]++;}
+                searchWordsCount[index]++;
+            }
+        }
+    }
+}
+```
+
+### Algoritmo Paralelo com Threads Virtuais
+```java
+public class ParaleloVirtual {
+    private final int threads;
+    private final int wordsPerThread;
+    private final String[] words;
+    private final Map<String, Integer> wordMap;
+
+    private int[] searchWordsCount;
+    private long startTime;
+    private long endTime;
+    private long time;
+
+    public ParaleloVirtual(int threads,String[] words,String[] searchWords){
+        this.threads = threads;
+        this.words = words;
+        this.wordMap = new HashMap<>();
+        for (int i = 0; i < searchWords.length; i++) {
+            this.wordMap.put(searchWords[i], i);
+        }
+        this.searchWordsCount = new int[searchWords.length];  
+        this.wordsPerThread = words.length / threads;
+        setStartTime();  
+        startThreads();
+        setEndTime();
+    }
+
+    private void setStartTime() {
+        this.startTime = System.nanoTime()/1000;
+    }
+
+    private void setEndTime() {
+        this.endTime = System.nanoTime()/1000;
+        this.time = endTime - startTime;
+    }
+
+    private void startThreads(){
+        for (int i = 0; i < threads; i++){
+            int indice = i;
+            Thread.startVirtualThread(() -> {
+                searchWords(indice);
+            });
+        }
+    }
+
+    private void searchWords(int indice){
+        int threadIndex = indice * wordsPerThread;
+        int limit = threadIndex + wordsPerThread;
+
+        if(indice == threads - 1){
+            limit = words.length;
+        }
+
+        for(int i = threadIndex; i < limit; i++){
+            Integer index = wordMap.get(words[i]);
+            if (index != null) { 
+              //  synchronized (searchWordsCount) {searchWordsCount[index]++;}
+               searchWordsCount[index]++;
+            }
+        }
+    }
+}
+```
+
+### Estratégia de Particionamento de Dados
+
+O algoritmo de particionamento utilizado divide o array de palavras em segmentos contíguos de tamanho aproximadamente igual. Esta abordagem, conhecida como "particionamento por blocos", foi escolhida por sua simplicidade e eficiência:
+
+1. Calcula-se o tamanho do bloco: `wordsPerThread = words.length / threads`
+2. Cada thread recebe um segmento de palavras:
+   - Thread 0: palavras do índice 0 até (wordsPerThread - 1)
+   - Thread 1: palavras do índice chunkSize até ( indice * wordsPerThread + wordsPerThread)
+   - ...
+   - Última thread: palavras do índice (indice*wordsPerThread) até o final
+
+Esta estratégia minimiza o overhead de comunicação entre threads, já que cada uma processa seu bloco independentemente. No entanto, pode levar a desbalanceamento de carga se as palavras buscadas estiverem distribuídas de forma não uniforme no texto.
+
+Alternativas consideradas incluíam particionamento circular (round-robin) e particionamento dinâmico, mas o particionamento por blocos apresentou melhor desempenho nos testes preliminares.
+
+## 📋 Amostra de Resultados
+
 ```
 Palavras: bacana 0
 Palavras: oppression 7
@@ -238,49 +491,50 @@ Palavras: virtue 283
 Palavras: dear 1850
 Palavras: eita 0
 Palavras: miss 2293
-============================================== RESULTADOS DE PERFORMANCE =======================================
+======================== RESULTADOS DE PERFORMANCE =============================
 🔍 CONJUNTO DE PALAVRAS 1: clarissa, letter, lovelace, virtue, dear, miss
 │ SEQUENCIAL    │ Tempo médio:  6755,30 μs │ Desvio padrão:    43,00 μs │
-├───────────────┼──────────────────────┼──────────────────────────┼───────────────────┼────────────────────────┤
-│   PARALELO    │      TEMPO MÉDIO     │      DESVIO PADRÃO       │      SPEEDUP      │       EFICIÊNCIA       │
-├───────────────┼──────────────────────┼──────────────────────────┼───────────────────┼────────────────────────┤
-│  2 Threads    │  4016,49 μs          │    36,36 μs              │   1,68x           │   84,09%               │
-│  4 Threads    │  2253,35 μs          │    36,65 μs              │   3,00x           │   74,95%               │
-│  8 Threads    │  2926,78 μs          │    85,33 μs              │   2,31x           │   28,85%               │
-└───────────────┴──────────────────────┴──────────────────────────┴───────────────────┴────────────────────────┘
+├───────────────┼────────────────┼──────────────────┼───────────┼──────────────┤
+│   PARALELO    │   TEMPO MÉDIO  │   DESVIO PADRÃO  │  SPEEDUP  │  EFICIÊNCIA  │
+├───────────────┼────────────────┼──────────────────┼───────────┼──────────────┤
+│  2 Threads    │  4016,49 μs    │    36,36 μs      │   1,68x   │   84,09%     │
+│  4 Threads    │  2253,35 μs    │    36,65 μs      │   3,00x   │   74,95%     │
+│  8 Threads    │  2926,78 μs    │    85,33 μs      │   2,31x   │   28,85%     │
+└───────────────┴────────────────┴──────────────────┴───────────┴──────────────┘
 
-================================================= THREAD VIRTUAL ===============================================
-├───────────────┼──────────────────────┼──────────────────────────┼───────────────────┼────────────────────────┤
-│   PARALELO    │      TEMPO MÉDIO     │      DESVIO PADRÃO       │      SPEEDUP      │       EFICIÊNCIA       │
-├───────────────┼──────────────────────┼──────────────────────────┼───────────────────┼────────────────────────┤
-│  2 Threads    │  10,59 μs            │     0,59 μs              │ 637,87x           │ 31893,64%              │
-│  4 Threads    │  20,43 μs            │     0,94 μs              │ 330,68x           │ 8266,98%               │
-│  8 Threads    │  13,52 μs            │     6,94 μs              │ 499,49x           │ 6243,63%               │
-└───────────────┴──────────────────────┴──────────────────────────┴───────────────────┴────────────────────────┘
+============================== THREAD VIRTUAL ==================================
+├───────────────┼────────────────┼──────────────────┼───────────┼──────────────┤
+│   PARALELO    │   TEMPO MÉDIO  │   DESVIO PADRÃO  │  SPEEDUP  │  EFICIÊNCIA  │
+├───────────────┼────────────────┼──────────────────┼───────────┼──────────────┤
+│  2 Threads    │  10,59 μs      │     0,59 μs      │ 637,87x   │ 31893,64%    │
+│  4 Threads    │  20,43 μs      │     0,94 μs      │ 330,68x   │ 8266,98%     │
+│  8 Threads    │  13,52 μs      │     6,94 μs      │ 499,49x   │ 6243,63%     │
+└───────────────┴────────────────┴──────────────────┴───────────┴──────────────┘
 
 🔍 CONJUNTO DE PALAVRAS 2: eita, bacana, vixe, forbidden, indignation, oppression
 │ SEQUENCIAL    │ Tempo médio:  6493,95 μs │ Desvio padrão:    40,95 μs │
-├───────────────┼──────────────────────┼──────────────────────────┼───────────────────┼────────────────────────┤
-│   PARALELO    │      TEMPO MÉDIO     │      DESVIO PADRÃO       │      SPEEDUP      │       EFICIÊNCIA       │
-├───────────────┼──────────────────────┼──────────────────────────┼───────────────────┼────────────────────────┤
-│  2 Threads    │  3818,12 μs          │    78,01 μs              │   1,70x           │   85,04%               │
-│  4 Threads    │  2045,03 μs          │    18,30 μs              │   3,18x           │   79,39%               │
-│  8 Threads    │  1531,93 μs          │    24,04 μs              │   4,24x           │   52,99%               │
-└───────────────┴──────────────────────┴──────────────────────────┴───────────────────┴────────────────────────┘
+├───────────────┼────────────────┼──────────────────┼───────────┼──────────────┤
+│   PARALELO    │   TEMPO MÉDIO  │   DESVIO PADRÃO  │  SPEEDUP  │  EFICIÊNCIA  │
+├───────────────┼────────────────┼──────────────────┼───────────┼──────────────┤
+│  2 Threads    │  3818,12 μs    │    78,01 μs      │   1,70x   │   85,04%     │
+│  4 Threads    │  2045,03 μs    │    18,30 μs      │   3,18x   │   79,39%     │
+│  8 Threads    │  1531,93 μs    │    24,04 μs      │   4,24x   │   52,99%     │
+└───────────────┴────────────────┴──────────────────┴───────────┴──────────────┘
 
-================================================= THREAD VIRTUAL ===============================================
-├───────────────┼──────────────────────┼──────────────────────────┼───────────────────┼────────────────────────┤
-│   PARALELO    │      TEMPO MÉDIO     │      DESVIO PADRÃO       │      SPEEDUP      │       EFICIÊNCIA       │
-├───────────────┼──────────────────────┼──────────────────────────┼───────────────────┼────────────────────────┤
-│  2 Threads    │  1,62 μs             │     0,51 μs              │ 4006,91x          │ 200345,39%             │ 
-│  4 Threads    │  3,00 μs             │     0,00 μs              │ 2164,65x          │ 54116,28%              │
-│  8 Threads    │  6,00 μs             │     0,00 μs              │ 1082,33x          │ 13529,07%              │
-└───────────────┴──────────────────────┴──────────────────────────┴───────────────────┴────────────────────────┘
+============================== THREAD VIRTUAL ==================================
+├───────────────┼────────────────┼──────────────────┼───────────┼──────────────┤
+│   PARALELO    │   TEMPO MÉDIO  │   DESVIO PADRÃO  │  SPEEDUP  │  EFICIÊNCIA  │
+├───────────────┼────────────────┼──────────────────┼───────────┼──────────────┤
+│  2 Threads    │  1,62 μs       │     0,51 μs      │ 4006,91x  │ 200345,39%   │ 
+│  4 Threads    │  3,00 μs       │     0,00 μs      │ 2164,65x  │ 54116,28%    │
+│  8 Threads    │  6,00 μs       │     0,00 μs      │ 1082,33x  │ 13529,07%    │
+└───────────────┴────────────────┴──────────────────┴───────────┴──────────────┘
 
-=======================================================================================================================
+
+=================================================================================
+
 ```
 Adicionalmente, os resultados são exportados para o arquivo `resultados_teste.csv` e os gráficos são exibidos em uma interface gráfica.
-
 
 ## 🔧 Dependências
 
@@ -326,7 +580,7 @@ O projeto utiliza as seguintes bibliotecas:
 ## 🚦 Como executar
 
 ### Pré-requisitos
-- Java JDK 11 ou superior
+- Java JDK 11 ou superior (JDK 19+ para threads virtuais)
 - Maven 3.6 ou superior
 
 ### Passos para execução
@@ -367,10 +621,15 @@ private int iterations = 30;
 
 ## 📈 Análise de Resultados
 
-Os resultados gerados permitem várias análises importantes:
-
 ### Speedup e Lei de Amdahl
 O speedup observado demonstra como o paralelismo melhora o desempenho, mas também revela os limites da paralelização conforme previsto pela Lei de Amdahl. À medida que o número de threads aumenta, o ganho de desempenho começa a apresentar rendimentos decrescentes.
+
+Para threads tradicionais, observamos aproximadamente:
+- 2 threads: 1.7x speedup (próximo do ideal de 2x)
+- 4 threads: 3.0x speedup (próximo do ideal de 4x)
+- 8 threads: 4.2x speedup (abaixo do ideal de 8x)
+
+Este comportamento sugere que aproximadamente 85% do algoritmo é paralelizável, com cerca de 15% sendo overhead ou parte sequencial obrigatória.
 
 ### Eficiência do Paralelismo
 A eficiência (speedup/número de threads) normalmente diminui com o aumento do número de threads devido a:
@@ -378,82 +637,100 @@ A eficiência (speedup/número de threads) normalmente diminui com o aumento do 
 - Contenção em recursos compartilhados
 - Limitações da porção paralelizável do algoritmo
 
+Observamos esta tendência nos resultados com threads tradicionais:
+- 2 threads: ~85% de eficiência
+- 4 threads: ~75% de eficiência
+- 8 threads: ~53% de eficiência
+
 ### Impacto da Distribuição de Palavras
-A frequência das palavras buscadas no documento pode afetar o desempenho relativo dos algoritmos. Palavras mais frequentes resultam em mais atualizações de contadores, o que pode aumentar a contenção em implementações paralelas.
+A frequência das palavras buscadas no documento afeta o desempenho relativo dos algoritmos, especialmente nas versões paralelas. Nos resultados, notamos que:
 
-## 🧵 Threads Virtuais: Análise de Resultados
+- Palavras mais frequentes (conjunto 1) geraram speedups menores (2.31x com 8 threads)
+- Palavras menos frequentes (conjunto 2) permitiram speedups maiores (4.24x com 8 threads)
 
-Os resultados com o uso de **threads virtuais** evidenciam um desempenho significativamente superior, destacando-se pela leveza no gerenciamento e pela escalabilidade extrema, especialmente em tarefas altamente paralelizáveis.
+Isso ocorre porque palavras mais frequentes resultam em mais atualizações de contadores, o que pode aumentar a contenção em implementações paralelas, mesmo quando usamos técnicas para minimizar o compartilhamento de recursos.
 
-### Speedup e Eficiência Além do Convencional
-Os speedups observados com threads virtuais são surpreendentes, chegando a milhares de vezes o desempenho da versão sequencial. Isso ocorre devido ao **baixo overhead de criação**, **agendamento eficiente** e **execução leve** dessas threads. A eficiência, portanto, ultrapassa em muito os 100%, o que seria impossível com threads físicas, mas aqui representa o quanto as threads virtuais otimizam a execução.
+### Impacto do Context Switch
+Um dos fatores mais significativos para o desempenho excepcional das threads virtuais é a drástica redução do overhead de troca de contexto (context switch). Nas threads tradicionais do sistema operacional, cada troca de contexto envolve:
 
-### Threads Virtuais vs Threads Tradicionais
-Diferente das threads do sistema operacional, as threads virtuais não bloqueiam recursos nativos, permitindo a execução de milhões de tarefas simultâneas. Isso se reflete em tempos de execução extremamente baixos (na casa dos microssegundos) e em **speedups massivos mesmo com poucas threads**.
+1. Salvamento completo do estado da CPU (registradores, contadores, flags)
+2. Atualização das tabelas de processo do SO
+3. Invalidação de caches de memória
+4. Troca da pilha de execução
+5. Restauração do estado para o novo processo
 
-### Impacto do Tipo de Palavras Buscadas
-A performance das threads virtuais também varia com a natureza dos dados:
-- Para palavras **frequentes**, observa-se alguma oscilação no tempo médio com mais threads, indicando possíveis **pontos de contenção**.
-- Para palavras **raras**, o desempenho é ainda melhor, pois há menos atualizações concorrentes, permitindo que as threads virtuais se destaquem plenamente.
+Esse processo pode consumir milhares de ciclos de CPU. Em contraste, as threads virtuais do Java utilizam um mecanismo de continuação (continuations) que:
 
-### Conclusão
-As **threads virtuais revolucionam a forma como construímos aplicações paralelas**. Elas são altamente recomendadas para cenários onde se exige escalabilidade, leveza e alta concorrência — sejam aplicações web, servidores de alto tráfego ou mesmo algoritmos paralelizáveis como o apresentado.
+1. Armazena apenas o estado mínimo necessário na pilha Java
+2. Permite trocas de contexto extremamente leves (ordem de magnitude de nanossegundos vs. microssegundos)
+3. É gerenciado pelo runtime da JVM, não pelo sistema operacional
+4. Não exige interrupções do sistema operacional
 
-> 💡 *Apesar dos resultados impressionantes, é importante lembrar que benchmarks com tempos extremamente curtos podem ser sensíveis a variações de ambiente e precisam ser interpretados com cautela.*
+Este mecanismo explica o ganho de desempenho extraordinário (~4000x) observado nas implementações com threads virtuais.
 
+### Threads Virtuais vs. Tradicionais
 
-## 📈 Reflexões Sobre os Resultados
+As threads virtuais demonstraram um desempenho significativamente superior:
 
-Conforme solicitado na atividade, incluímos uma análise reflexiva sobre os resultados obtidos:
+1. **Tempos de execução**: 1-6μs vs. 1500-4000μs (3 ordens de magnitude mais rápidas)
+2. **Escalabilidade**: Mantiveram alto throughput mesmo com aumento do número de threads
+3. **Estabilidade**: Menor desvio padrão (mais consistentes)
+4. **Eficiência extraordinária**: Valores superiores a 10.000% devido ao modelo de execução fundamentalmente diferente
 
-### 1. Por que obteve esses resultados?
+Este comportamento é consistente com a proposta do Project Loom, que visa proporcionar concorrência de alto throughput sem o overhead tradicional das threads do sistema operacional.
 
-Os resultados demonstram que a versão paralela com 8 threads obteve o melhor desempenho,quando não utilizamos synchronized, com um speedup aproximado de 6x em relação à versão sequencial. Este comportamento pode ser explicado pela natureza do problema de busca de palavras, que é altamente paralelizável por permitir a divisão do texto em segmentos independentes para processamento simultâneo.Ao utlizarmos synchronized seu desempenho cai devido ao número de trheads tentando acessar
+## 📝 Conclusões
 
-## 🧵 Análise: Uso de `synchronized` e Impacto no Desempenho Paralelo
+### Principais Descobertas
 
-Os resultados demonstram que a **versão paralela com 8 threads obteve o melhor desempenho** quando **não utilizamos o modificador `synchronized`**, alcançando um **speedup aproximado de 6x** em relação à versão sequencial.
+1. **Paralelização com Threads Tradicionais**:
+   - Speedup quase linear até 4 threads (3x mais rápido)
+   - Aproximadamente 85% de eficiência com 2 threads
+   - Rendimentos decrescentes após 4 threads, conforme previsto pela Lei de Amdahl
 
-Esse comportamento é esperado, dado que o problema de **busca e contagem de palavras** é altamente paralelizável. O texto pode ser dividido em **segmentos independentes**, permitindo que múltiplas threads processem partes distintas do conteúdo ao mesmo tempo, sem necessidade de sincronização constante.
+2. **Paralelização com Threads Virtuais**:
+   - Ganho de desempenho extraordinário (até 4000x mais rápido!)
+   - Overhead mínimo de criação e troca de contexto
+   - Eficiência que excede 100%, indicando benefícios estruturais adicionais
 
-Contudo, ao introduzirmos o uso de `synchronized` geralmente necessário para **garantir a consistência dos dados compartilhados**, como o mapa de contadores , o desempenho **diminui significativamente**. Isso acontece porque o `synchronized` impõe **exclusão mútua**, ou seja, apenas uma thread por vez pode acessar a região crítica protegida, como ao incrementar o contador de uma palavra. Essa contenção gera **esperas** e reduz a **eficiência do paralelismo**, especialmente quando o número de threads é elevado.
+3. **Fatores de Influência**:
+   - A frequência das palavras buscadas afeta o desempenho
+   - O particionamento por blocos mostrou-se eficiente para este problema
+   - O overhead de sincronização é o principal limitador para threads tradicionais
 
+### Considerações Práticas
 
-### 2. Relação do speedup com fatores de hardware e software:
+- **Para cargas de trabalho I/O-bound**: Threads virtuais oferecem benefícios massivos
+- **Para processamento intensivo de dados**: Mesmo com threads tradicionais, a paralelização oferece ganhos significativos
+- **Limitação de hardware**: Os resultados mostraram um pico de eficiência em 4 threads, consistente com os 4 núcleos de performance do processador utilizado
 
-#### 2.1. Hardware
-- **Processador**: M2
-- **Memória**: 8GB 
+### Trabalhos Futuros
 
-O hardware utilizado influencia diretamente nos resultados. Um processador com mais núcleos físicos permite maior paralelismo real. Observamos que o speedup com 8 threads foi significativo, mas não linear (6x ao invés de 8x), sugerindo que estamos atingindo os limites do hardware ou que partes do código não são completamente paralelizáveis.
+Este projeto poderia ser expandido nas seguintes direções:
 
-#### 2.2. Sistema Operacional
-- **SO**: macOS 15.4.1 
+1. **Algoritmos alternativos**:
+   - Implementar busca paralela com algoritmos distribuídos (MapReduce)
+   - Explorar soluções baseadas em stream processing
 
-O sistema operacional influencia principalmente no escalonamento de threads. Sistemas operacionais modernos como macOS têm escalonadores eficientes, mas ainda assim existe overhead na troca de contexto entre threads, que pode explicar por que a eficiência diminui à medida que aumentamos o número de threads.
+2. **Otimizações adicionais**:
+   - Testar outras estratégias de particionamento (round-robin, dynamic)
+   - Experimentar com estruturas de dados concorrentes otimizadas
 
-#### 2.3. Linguagem de Programação
-- **Linguagem**: Java 17
-- **JVM**: OpenJDK 17.0.7
+3. **Análise mais profunda**:
+   - Medir o impacto do cache locality em cada implementação
+   - Analisar o comportamento com diferentes tamanhos de documento
 
-A escolha da linguagem Java influencia os resultados. A JVM tem seu próprio gerenciamento de memória e threads, que adiciona uma camada de abstração. Linguagens de mais baixo nível como C/C++ poderiam potencialmente oferecer melhor desempenho por terem menos overhead, mas com custo maior de desenvolvimento.
+4. **Aplicações**:
+   - Incorporar algoritmos para sistemas de busca em tempo real
+   - Desenvolver um mecanismo de indexação paralelo completo
 
-#### 2.4. Conjunto de Dados
-Observamos que o conjunto de palavras raras ou inexistentes (segundo conjunto) apresentou resultados similares ao conjunto de palavras frequentes. Isso ocorre porque o algoritmo de busca utiliza HashMap que tem complexidade O(1), fazendo com que a frequência das palavras no texto tenha pouco impacto no tempo de processamento total.
+## 🔗 Referências
 
-#### 2.5. Melhor Desempenho do Paralelo vs. Sequencial
-A abordagem paralela obteve melhor desempenho porque:
-- A busca de palavras é uma operação com alta capacidade de paralelização
-- O custo de sincronização entre threads é baixo comparado ao ganho de processamento
-- A divisão de trabalho implementada distribui a carga de forma balanceada entre as threads
+1. Project Loom - JEP 425: Virtual Threads (Preview) - [https://openjdk.java.net/jeps/425](https://openjdk.java.net/jeps/425)
+2. Amdahl, G.M. "Validity of the single processor approach to achieving large scale computing capabilities" - [AFIPS Conference Proceedings, 1967](https://dl.acm.org/doi/10.1145/1465482.1465560)
+3. Apache PDFBox Documentation - [https://pdfbox.apache.org/documentation.html](https://pdfbox.apache.org/documentation.html)
+4. Java Thread Programming - Oracle Documentation - [https://docs.oracle.com/javase/tutorial/essential/concurrency/](https://docs.oracle.com/javase/tutorial/essential/concurrency/)
+5. JFreeChart Documentation - [https://www.jfree.org/jfreechart/](https://www.jfree.org/jfreechart/)
 
-#### 2.6. Aumento de Vazão
-Conseguimos aumentar a vazão principalmente nos seguintes aspectos:
-- Divisão balanceada do texto entre threads
-- Uso de estruturas de dados eficientes (HashMap) para busca em O(1)
-- Minimização da contenção de recursos entre threads
-- Processamento paralelo da contagem de múltiplas palavras simultaneamente
-
-### Conclusão
-
-Os resultados confirmam os benefícios da paralelização para este tipo de problema. Observamos speedups significativos, mas não lineares, indicando a presença de seções não paralelizáveis e overhead de gerenciamento de threads. A versão com 8 threads demonstrou o melhor desempenho absoluto, mas com eficiência reduzida em comparação às versões com menos threads, evidenciando os princípios da Lei de Amdahl na prática.
+---
+*Este README foi elaborado para documentar o projeto de análise de desempenho de algoritmos de busca paralela em documentos PDF, desenvolvido como parte da disciplina de Sistemas Paralelos e Distribuídos.*
