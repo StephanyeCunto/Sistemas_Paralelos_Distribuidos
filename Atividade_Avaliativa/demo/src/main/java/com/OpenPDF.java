@@ -3,6 +3,8 @@ package com;
 import java.io.File;
 import java.io.IOException;
 
+import java.util.ArrayList;
+
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
@@ -21,6 +23,8 @@ public class OpenPDF {
             File file = new File(this.filePath);
             document = PDDocument.load(file);
             PDFTextStripper pdfStripper = new PDFTextStripper();
+            pdfStripper.setSortByPosition(false); 
+            pdfStripper.setAddMoreFormatting(false);
             extractWords(pdfStripper.getText(document));
         }catch (IOException e) {
             System.out.println("Erro ao ler o PDF: " + e.getMessage());
@@ -28,10 +32,14 @@ public class OpenPDF {
     }
 
     private void extractWords(String text){
-        words = text.replaceAll("[^a-zA-Z]", " ").split(" ");
+        ArrayList<String> word = new ArrayList<>();
+        words = text.replaceAll("[^a-zA-Z]", " ").toLowerCase().split("\\s+");
         for(int i = 0; i < words.length; i++){
-            words[i] = words[i].toLowerCase();
+            if(!words[i].isEmpty()){
+                word.add(words[i]);
+            }
         }
+        words = word.toArray(new String[0]);
     }
 
     public void closePDF(){

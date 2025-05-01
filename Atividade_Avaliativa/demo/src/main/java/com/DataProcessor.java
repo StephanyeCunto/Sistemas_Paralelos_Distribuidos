@@ -19,7 +19,7 @@ public class DataProcessor {
     private double[][] efficiency;
     private final int iterations;
     private final int searchWordsCount;
-    private final int threads[];
+    private final int[] threads;
 
     private int[][][] timeParallelVirtualSearchWords;
     private double[][] timeParallelVirtualAverage;

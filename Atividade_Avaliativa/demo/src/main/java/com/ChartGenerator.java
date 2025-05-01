@@ -69,8 +69,8 @@ public class ChartGenerator {
             dataset.addValue(timeSequentialAverage[i], "Sequencial", wordSetLabel);
             
             for (int j = 0; j < threads.length; j++) {
-                dataset.addValue(timeParallelAverage[i][j], 
-                               threads[j] + " Threads", wordSetLabel);
+                dataset.addValue(timeParallelAverage[i][j], threads[j] + " Threads", wordSetLabel);
+                dataset.addValue(timeParallelVirtualAverage[i][j], threads[j]+ " ThreadsVirtuais", wordSetLabel);
             }
         }
         
@@ -114,17 +114,21 @@ public class ChartGenerator {
 
     private ChartPanel createSpeedupChart() {
         XYSeriesCollection dataset = new XYSeriesCollection();
-        
+    
         for (int i = 0; i < searchWords.length; i++) {
-            XYSeries series = new XYSeries("Conjunto " + (i+1));
-            
+            XYSeries normalSeries = new XYSeries("Conjunto " + (i+1) + " (Normal)");
             for (int j = 0; j < threads.length; j++) {
-                series.add(threads[j], speedup[i][j]);
+                normalSeries.add(threads[j], speedup[i][j]);
             }
+            dataset.addSeries(normalSeries);
             
-            dataset.addSeries(series);
+            XYSeries virtualSeries = new XYSeries("Conjunto " + (i+1) + " (Virtual)");
+            for (int j = 0; j < threads.length; j++) {
+                virtualSeries.add(threads[j], speedupVirtual[i][j]);
+            }
+            dataset.addSeries(virtualSeries);
         }
-        
+    
         JFreeChart chart = ChartFactory.createXYLineChart(
             "Speedup vs. Número de Threads",
             "Número de Threads",
@@ -135,7 +139,7 @@ public class ChartGenerator {
             true,
             false
         );
-        
+    
         customizeChart(chart);
         return new ChartPanel(chart);
     }
@@ -144,13 +148,17 @@ public class ChartGenerator {
         XYSeriesCollection dataset = new XYSeriesCollection();
         
         for (int i = 0; i < searchWords.length; i++) {
-            XYSeries series = new XYSeries("Conjunto " + (i+1));
-            
+            XYSeries normalSeries = new XYSeries("Conjunto " + (i+1) + " (Normal)");
             for (int j = 0; j < threads.length; j++) {
-                series.add(threads[j], efficiency[i][j] * 100);
+                normalSeries.add(threads[j], efficiency[i][j]);
             }
+            dataset.addSeries(normalSeries);
             
-            dataset.addSeries(series);
+            XYSeries virtualSeries = new XYSeries("Conjunto " + (i+1) + " (Virtual)");
+            for (int j = 0; j < threads.length; j++) {
+                virtualSeries.add(threads[j], efficiencyVirtual[i][j]);
+            }
+            dataset.addSeries(virtualSeries);
         }
         
         JFreeChart chart = ChartFactory.createXYLineChart(

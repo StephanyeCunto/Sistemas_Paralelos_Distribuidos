@@ -2,7 +2,6 @@ package com;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import lombok.Getter;
 
 @Getter
@@ -17,7 +16,7 @@ public class ParaleloVirtual {
     private long endTime;
     private long time;
 
-    public ParaleloVirtual(int threads,String[] words,String[] searchWords){
+    public ParaleloVirtual(int threads,String[] words,String[] searchWords) {
         this.threads = threads;
         this.words = words;
         this.wordMap = new HashMap<>();
@@ -26,6 +25,7 @@ public class ParaleloVirtual {
         }
         this.searchWordsCount = new int[searchWords.length];  
         this.wordsPerThread = words.length / threads;
+        
         setStartTime();  
         startThreads();
         setEndTime();
@@ -41,11 +41,21 @@ public class ParaleloVirtual {
     }
 
     private void startThreads(){
+        Thread[] thread = new Thread[threads];
+        
         for (int i = 0; i < threads; i++){
             int indice = i;
-            Thread.startVirtualThread(() -> {
+            thread[i] = Thread.startVirtualThread(() -> {
                 searchWords(indice);
             });
+        }
+
+        for (int i = 0; i < threads; i++) {
+            try {
+                thread[i].join();
+            } catch (InterruptedException e) {
+                System.err.println(e.getMessage());
+            }
         }
     }
 
@@ -53,15 +63,13 @@ public class ParaleloVirtual {
         int threadIndex = indice * wordsPerThread;
         int limit = threadIndex + wordsPerThread;
 
-        if(indice == threads - 1){
-            limit = words.length;
-        }
+        if(indice == threads - 1)limit = words.length;
 
         for(int i = threadIndex; i < limit; i++){
             Integer index = wordMap.get(words[i]);
             if (index != null) { 
-              //  synchronized (searchWordsCount) {searchWordsCount[index]++;}
-               searchWordsCount[index]++;
+              // synchronized (searchWordsCount) {searchWordsCount[index]++;}
+                searchWordsCount[index]++;
             }
         }
     }

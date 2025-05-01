@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class PerformanceTest {
     private final String[] words;
-    private final int[] threads = {2, 4, 8 };
+    private final int[] threads = {2, 4, 8};
     private final int iterations = 100;
     
     private final String[][] searchWords = {

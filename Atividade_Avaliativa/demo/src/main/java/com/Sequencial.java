@@ -9,7 +9,6 @@ public class Sequencial {
     private final String[] words;    
     private final Map<String, Integer> wordMap;
 
-
     private int[] searchWordsCount;
     private long startTime;
     private long endTime;
@@ -40,9 +39,7 @@ public class Sequencial {
     private void searchWords() {
         for (String word : words) {
             Integer index = wordMap.get(word);
-            if (index != null) { 
-                searchWordsCount[index]++;
-            }
+            if (index != null) searchWordsCount[index]++;
         }
     }
 }

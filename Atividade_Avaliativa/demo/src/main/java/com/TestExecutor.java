@@ -50,8 +50,8 @@ public class TestExecutor {
         for (int i = 0; i < this.searchWords.length; i++) {
             for (int j = 0; j < this.threads.length; j++) {
                 for (int k = 0; k < this.iterations; k++) {
-                    ParaleloVirtual paraleloTeste = new ParaleloVirtual(this.threads[j], this.words, this.searchWords[i]);
-                    timeParallelSearchWords[i][j][k] = (int) paraleloTeste.getTime();
+                    ParaleloVirtual paraleloVirtual = new ParaleloVirtual(this.threads[j], this.words, this.searchWords[i]);
+                    timeParallelSearchWords[i][j][k] = (int) paraleloVirtual.getTime();
                 }
             }
         }
@@ -63,14 +63,15 @@ public class TestExecutor {
 
         for (int i = 0; i < this.searchWords.length; i++) {
             for (int k = 0; k < this.iterations; k++) {
-                Paralelo paraleloTeste = new Paralelo(8, this.words, this.searchWords[i]);
-                paraleloTeste.getWordMap().forEach((key, value)->{
+                ParaleloVirtual paraleloVirtual= new ParaleloVirtual(8, this.words, this.searchWords[i]);
+                paraleloVirtual.getWordMap().forEach((key, value)->{
                     List<Integer> list = new ArrayList<>();
                     list.add(value);
-                    list.add(paraleloTeste.getSearchWordsCount()[value]);
+                    list.add(paraleloVirtual.getSearchWordsCount()[value]);
                     wordMap.put(key, list);
                 });
             }
+            
         }
     
         return wordMap;
