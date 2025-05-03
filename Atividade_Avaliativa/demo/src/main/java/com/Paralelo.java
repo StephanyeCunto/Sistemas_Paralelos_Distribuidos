@@ -69,7 +69,7 @@ public class Paralelo {
             Integer index = wordMap.get(words[i]);
             if (index != null) { 
               // synchronized (searchWordsCount) {searchWordsCount[index]++;}
-                searchWordsCount[index]++;
+               searchWordsCount[index]++;
             }
         }
     }

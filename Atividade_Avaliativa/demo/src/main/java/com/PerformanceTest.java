@@ -75,7 +75,7 @@ public class PerformanceTest {
             System.out.println("├───────────────┼─────────────────────────┼──────────────────────────┼───────────────────┼──────────────────────────────┤");
             
             for (int j = 0; j < this.threads.length; j++) {
-                System.out.printf("│ %2d Threads    │ %8.2f μs             │ %8.2f μs              │ %6.2fx           │ %6.2f%%                 │\n", 
+                System.out.printf("│ %2d Threads    │ %8.2f μs             │ %8.2f μs              │ %6.2fx           │  %6.2f%%                     │\n", 
                               this.threads[j],
                               dataProcessor.getTimeParallelVirtualAverage()[i][j],
                               dataProcessor.getTimeParallelVirtualStdDev()[i][j],

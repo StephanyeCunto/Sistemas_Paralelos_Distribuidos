@@ -1,15 +1,15 @@
 Tipo;Conjunto;Threads;Tempo Médio (μs);Desvio Padrão;Speedup;Eficiência
-Sequencial;1;1;5214,60;24,27;;
-Sequencial;2;1;4653,01;21,81;;
-Paralelo;1;2;3084,93;15,47;1,69;84,52
-Paralelo;1;4;1702,80;20,70;3,06;76,56
-Paralelo;1;8;1399,58;60,25;3,73;46,57
-Paralelo;2;2;2743,03;24,23;1,70;84,82
-Paralelo;2;4;1527,60;13,67;3,05;76,15
-Paralelo;2;8;1192,76;26,76;3,90;48,76
-Paralelo Virtual;1;2;3052,74;34,74;1,71;85,41
-Paralelo Virtual;1;4;1663,36;82,80;3,13;78,37
-Paralelo Virtual;1;8;1314,88;106,05;3,97;49,57
-Paralelo Virtual;2;2;2988,70;61,08;1,56;77,84
-Paralelo Virtual;2;4;1536,35;38,59;3,03;75,72
-Paralelo Virtual;2;8;1106,29;57,55;4,21;52,57
+Sequencial;1;1;5979,04;155,70;;
+Sequencial;2;1;5230,55;48,38;;
+Paralelo;1;2;3458,34;63,07;1,73;86,44
+Paralelo;1;4;2026,43;188,10;2,95;73,76
+Paralelo;1;8;1668,60;195,90;3,58;44,79
+Paralelo;2;2;3106,65;61,17;1,68;84,18
+Paralelo;2;4;1744,52;86,76;3,00;74,96
+Paralelo;2;8;1344,56;65,47;3,89;48,63
+Paralelo Virtual;1;2;3416,87;47,68;1,75;87,49
+Paralelo Virtual;1;4;1914,73;150,46;3,12;78,07
+Paralelo Virtual;1;8;1474,81;141,85;4,05;50,68
+Paralelo Virtual;2;2;3216,56;181,17;1,63;81,31
+Paralelo Virtual;2;4;1772,12;23,10;2,95;73,79
+Paralelo Virtual;2;8;1254,55;73,53;4,17;52,12
