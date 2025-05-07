@@ -2,6 +2,8 @@ package com;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+
 import lombok.Getter;
 
 @Getter
@@ -13,6 +15,7 @@ public class Sequencial {
     private long startTime;
     private long endTime;
     private long time;
+    private CountDownLatch latch;
 
     public Sequencial(String[] words,String[] searchWords) {
         this.words = words;

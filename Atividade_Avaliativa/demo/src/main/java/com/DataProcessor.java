@@ -55,7 +55,7 @@ public class DataProcessor {
     }
 
     private void removeWarmUp() {
-        int warmupCount = this.iterations / 10; 
+        int warmupCount = 3; 
         int newSize = this.iterations - warmupCount;
         
         for (int i = 0; i < this.searchWordsCount; i++) {
@@ -81,7 +81,6 @@ public class DataProcessor {
             
             for (int j = 0; j < this.threads.length; j++) {
                 this.timeParallelSearchWords[i][j] = removeOutliersFromArray(timeParallelSearchWords[i][j]);
-
                 this.timeParallelVirtualSearchWords[i][j] = removeOutliersFromArray(timeParallelVirtualSearchWords[i][j]);
             }
         }
