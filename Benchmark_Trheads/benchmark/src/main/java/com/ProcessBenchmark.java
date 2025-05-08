@@ -31,7 +31,7 @@ public class ProcessBenchmark {
             for (int i = 0; i < lines.length; i++) {
                 results[i] = Integer.parseInt(lines[i]);
             }
-            printResults(wordsToSearch, output.split("\n"));
+           // printResults(wordsToSearch, output.split("\n"));
             process.waitFor();
         } catch (IOException | InterruptedException e) {
             System.err.println("Erro ao executar tarefa: " + e.getMessage());

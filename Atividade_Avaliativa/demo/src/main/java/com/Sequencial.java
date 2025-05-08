@@ -1,5 +1,6 @@
 package com;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -40,6 +41,12 @@ public class Sequencial {
     }
 
     private void searchWords() {
+        try{
+        Process process = new ProcessBuilder("java -cp ./Atividade_Avaliativa/de,p/main/java com.CountWords").start();
+        process.waitFor();
+        }catch(IOException | InterruptedException e){
+            System.out.println(" Erro no processo "+e);
+        }
         for (String word : words) {
             Integer index = wordMap.get(word);
             if (index != null) searchWordsCount[index]++;
