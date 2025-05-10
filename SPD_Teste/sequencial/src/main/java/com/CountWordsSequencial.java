@@ -4,34 +4,26 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CountWordsSequencial {
-    static String[][] SEARCH_WORDS = {
-        { "clarissa", "letter", "lovelace", "virtue", "dear", "miss" },
-        { "eita", "bacana", "vixe", "forbidden", "indignation", "oppression" }
-    };    
-
     static String[] words;
     static int[] searchWordsCount;
 
     static Map<String, Integer> wordMap = new HashMap<>();
     
     public static void main(String[] args) {
-        OpenPDF pdf = new OpenPDF("./sequencial/src/main/resources/Clarissa_Harlowe.pdf");
-        words = pdf.getWords();
-        int groupWords =Integer.parseInt("0");
-
-        loadHasmap(groupWords);
+        initialize(args);
         searchWords();
-
-        for(String key : wordMap.keySet()){
-            System.out.println("Key: "+ key+ " : "+ searchWordsCount[wordMap.get(key)]);
-        }
+        loadResults();
     }
 
-    private static void loadHasmap(int group){
-        for (int i = 0; i < SEARCH_WORDS[group].length; i++) {
-            wordMap.put(SEARCH_WORDS[group][i], i);
+    private static void initialize(String[] args){
+        searchWordsCount = new int[args.length];
+        
+        for(int i=0; i< args.length; i++){
+            wordMap.put(args[i], i);
         }
-        searchWordsCount = new int[SEARCH_WORDS[group].length];
+
+        OpenPDF pdf = new OpenPDF("./sequencial/src/main/resources/Clarissa_Harlowe.pdf");
+        words = pdf.getWords();
     }
 
     private static void searchWords() {
@@ -40,4 +32,11 @@ public class CountWordsSequencial {
             if (index != null) searchWordsCount[index]++;
         }
     }
+
+    private static void loadResults(){
+        for(String key : wordMap.keySet()){
+            System.out.println("Key: "+ key+ " : "+ searchWordsCount[wordMap.get(key)]);
+        }
+    }
+        
 }
