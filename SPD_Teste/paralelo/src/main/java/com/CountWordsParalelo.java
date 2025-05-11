@@ -20,15 +20,15 @@ public class CountWordsParalelo {
     }
 
     private static void initialize(String[] args){
-        threads = Integer.parseInt(args[0]);
+        threads = Integer.parseInt(args[args.length - 1]);
 
         searchWordsCount = new AtomicInteger[args.length - 1];
         for (int i = 0; i < searchWordsCount.length; i++) {
             searchWordsCount[i] = new AtomicInteger();
         }
 
-        for(int i=1; i< args.length; i++){
-            wordMap.put(args[i], i-1);
+        for(int i=0; i< args.length-1; i++){
+            wordMap.put(args[i], i);
         }
 
         int timeStart = (int) System.currentTimeMillis();
@@ -72,7 +72,6 @@ public class CountWordsParalelo {
 
     private static void loadResults(){
         System.out.println(timeRead);
-
 
         for(String key : wordMap.keySet()){
             System.out.println("Key: "+ key+ " : "+ searchWordsCount[wordMap.get(key)].get());
