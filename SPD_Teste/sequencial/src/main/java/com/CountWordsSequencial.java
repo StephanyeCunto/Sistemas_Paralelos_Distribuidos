@@ -8,6 +8,8 @@ public class CountWordsSequencial {
     static int[] searchWordsCount;
 
     static Map<String, Integer> wordMap = new HashMap<>();
+
+    static int timeRead;
     
     public static void main(String[] args) {
         initialize(args);
@@ -22,8 +24,10 @@ public class CountWordsSequencial {
             wordMap.put(args[i], i);
         }
 
+        int timeStart = (int) System.currentTimeMillis();
         OpenPDF pdf = new OpenPDF("./sequencial/src/main/resources/Clarissa_Harlowe.pdf");
         words = pdf.getWords();
+        timeRead = (int) System.currentTimeMillis() - timeStart;
     }
 
     private static void searchWords() {
@@ -34,6 +38,7 @@ public class CountWordsSequencial {
     }
 
     private static void loadResults(){
+        System.out.println(timeRead);
         for(String key : wordMap.keySet()){
             System.out.println("Key: "+ key+ " : "+ searchWordsCount[wordMap.get(key)]);
         }

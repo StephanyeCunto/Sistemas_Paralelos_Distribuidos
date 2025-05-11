@@ -2,11 +2,14 @@ package com;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CountWordsParalelo {
     static String[] words;
-    static int[] searchWordsCount;
+    static AtomicInteger[] searchWordsCount;
     static int threads;
+
+    static int timeRead;
 
     static Map<String, Integer> wordMap = new HashMap<>();
     
@@ -19,14 +22,20 @@ public class CountWordsParalelo {
     private static void initialize(String[] args){
         threads = Integer.parseInt(args[0]);
 
-        searchWordsCount = new int[args.length - 1];
+        searchWordsCount = new AtomicInteger[args.length - 1];
+        for (int i = 0; i < searchWordsCount.length; i++) {
+            searchWordsCount[i] = new AtomicInteger();
+        }
 
         for(int i=1; i< args.length; i++){
             wordMap.put(args[i], i-1);
         }
 
-        OpenPDF pdf = new OpenPDF("./paralelo/src/main/resources/Clarissa_Harlowe.pdf");
+        int timeStart = (int) System.currentTimeMillis();
+        OpenPDF pdf = new OpenPDF("./sequencial/src/main/resources/Clarissa_Harlowe.pdf");
         words = pdf.getWords();
+        timeRead = (int) System.currentTimeMillis() - timeStart;
+
     }
 
     private static void intiializeThread() {
@@ -56,17 +65,17 @@ public class CountWordsParalelo {
         if(i == threads-1) limite = words.length;
 
         for(int j=wordInitial; j< limite; j++){
-            for (String word : words) {
-                Integer index = wordMap.get(word);
-                if (index != null) searchWordsCount[index]++;
-            }
+            Integer index = wordMap.get(words[j]);
+            if (index != null) searchWordsCount[index].incrementAndGet();
         }
     }
 
-
     private static void loadResults(){
+        System.out.println(timeRead);
+
+
         for(String key : wordMap.keySet()){
-            System.out.println("Key: "+ key+ " : "+ searchWordsCount[wordMap.get(key)]);
+            System.out.println("Key: "+ key+ " : "+ searchWordsCount[wordMap.get(key)].get());
         }
     }
 }
