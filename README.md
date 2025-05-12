@@ -229,18 +229,26 @@ Os resultados demonstram que a paralelização trouxe ganhos moderados de desemp
 
 4. **Tamanho do problema**: A contagem de palavras pode não ser um problema suficientemente complexo para que o paralelismo compense significativamente
 
+A arquitetura do Apple M2 é significativamente diferente de processadores x86. O M2 utiliza uma configuração híbrida com 4 núcleos de alto desempenho e 4 núcleos de eficiência energética, o que pode resultar em comportamentos distintos em cargas paralelas:
+
+1. **Heterogeneidade de núcleos**: O escalonador do sistema pode priorizar os núcleos de performance para threads com maior prioridade, resultando em desempenho assimétrico entre threads.
+
+2. **Memória unificada**: A RAM compartilhada entre CPU e GPU no M2 oferece alta largura de banda mas com capacidade total limitada (8GB), possivelmente limitando ganhos em operações paralelas intensivas em memória.
+
+3. **Pipeline de execução ARM**: A microarquitetura ARM do M2 possui características de execução distintas da arquitetura x86, o que pode alterar o equilíbrio entre processamento e I/O em nosso benchmark.
+
 ### Relação do speedup com fatores externos
 
 #### Hardware utilizado
-- **Processador**: Intel Core i7-10700K (8 núcleos, talvez com hyperthreading)
-- **Memória RAM**: 16GB DDR4
-- **Armazenamento**: SSD NVME
+- **Processador**: Apple Silicon M2 (8 núcleos - 4 de performance e 4 de eficiência)
+- **Memória RAM**: 8GB RAM unificada
+- **Armazenamento**: SSD interno
 
 **Influência**: O hardware tem influência significativa nos resultados. Com 8 threads físicas disponíveis, esperaríamos melhor desempenho para 8 threads lógicas, mas isso não ocorreu. Isso indica que outros fatores como cache, latência de memória e hardware de E/S podem estar limitando o desempenho.
 
 #### Sistema Operacional
-- **Sistema**: Windows 11 Pro
-- **Java**: OpenJDK 17
+- **Sistema**: macOS 15.4.1
+- **Java**: OpenJDK 23
 
 **Influência**: O escalonador do sistema operacional afeta como as threads são distribuídas entre os núcleos. Sistemas operacionais diferentes têm políticas de escalonamento distintas, o que pode favorecer ou prejudicar aplicações paralelas.
 
@@ -288,8 +296,8 @@ Os resultados mostram uma diferença de comportamento entre os conjuntos de pala
 
 1. Clone o repositório:
 ```bash
-git clone https://github.com/seu-usuario/contagem-palavras-benchmark.git
-cd contagem-palavras-benchmark
+git clone https://github.com/StephanyeCunto/Sistemas_Paralelos_Distribuidos.git
+cd Atividade_Avaliativa
 ```
 
 2. Compile os módulos:
@@ -320,38 +328,57 @@ java -jar target/initialize-1.0-SNAPSHOT.jar
 
 ## 📝 Conclusões
 
-Este projeto demonstrou os desafios e oportunidades da computação paralela aplicada a um problema de contagem de palavras. As principais conclusões são:
+Este projeto demonstrou e quantificou os desafios e oportunidades da programação paralela aplicada ao problema específico de contagem de palavras. As principais conclusões são:
 
-1. **Existe um número ótimo de threads**: Para este problema específico e hardware utilizado, 4 threads representam o melhor equilíbrio entre paralelismo e overhead
+1. **Paralelismo nem sempre significa desempenho significativamente melhor**
+   - O speedup máximo de 1,26x é modesto considerando o hardware utilizado
+   - A Lei de Amdahl limita o ganho potencial devido às partes inerentemente sequenciais
 
-2. **Eficiência diminui com mais threads**: A eficiência cai drasticamente de ~30% com 4 threads para ~13% com 8 threads, indicando que adicionar mais threads nem sempre é vantajoso
+2. **Existe um "ponto doce" para o número de threads**
+   - 4 threads proporcionaram o melhor equilíbrio entre paralelismo e overhead
+   - Adicionar mais threads além desse ponto piorou o desempenho
 
-3. **Speedup modesto**: O ganho máximo de desempenho foi de 1,26x, sugerindo que o problema de contagem de palavras tem características que limitam o benefício do paralelismo
+3. **A eficiência cai dramaticamente com o aumento de threads**
+   - De ~54% com 2 threads para ~13% com 8 threads
+   - Demonstra a importância de ajustar o paralelismo às características do problema
 
-4. **Estabilidade vs. Desempenho**: A implementação sequencial apresentou menor desvio padrão, indicando maior previsibilidade de desempenho
+4. **Características dos dados afetam o desempenho**
+   - Palavras raras permitiram melhor speedup que palavras frequentes
+   - Sugere que padrões de acesso à memória e contenção afetam o paralelismo
 
-5. **Conjunto de dados importa**: As palavras raras permitiram um speedup ligeiramente melhor que as palavras frequentes
+5. **Estabilidade vs. Desempenho é um trade-off**
+   - Implementações sequenciais mostram menor variabilidade
+   - Implementações paralelas oferecem melhor desempenho médio, mas com maior variabilidade
 
-Esta análise demonstra a importância de avaliar cuidadosamente as características do problema e do ambiente de execução antes de decidir pela paralelização, assim como a necessidade de encontrar o equilíbrio certo entre número de threads e overhead.
+Este projeto fornece insights valiosos sobre os fatores que influenciam o desempenho de programas paralelos, demonstrando a importância de uma abordagem empírica e baseada em dados para decisões de paralelização.
 
 ## 📚 Referências
 
-1. Herlihy, M., & Shavit, N. (2012). The Art of Multiprocessor Programming, Revised Reprint. Morgan Kaufmann.
+1. Herlihy, M., & Shavit, N. (2012). *The Art of Multiprocessor Programming, Revised Reprint*. Morgan Kaufmann.
 
-2. Goetz, B., Peierls, T., Bloch, J., Bowbeer, J., Holmes, D., & Lea, D. (2006). Java Concurrency in Practice. Addison-Wesley Professional.
+2. Goetz, B., Peierls, T., Bloch, J., Bowbeer, J., Holmes, D., & Lea, D. (2006). *Java Concurrency in Practice*. Addison-Wesley Professional.
 
-3. Patterson, D. A., & Hennessy, J. L. (2017). Computer Organization and Design RISC-V Edition: The Hardware Software Interface. Morgan Kaufmann.
+3. Patterson, D. A., & Hennessy, J. L. (2017). *Computer Organization and Design RISC-V Edition: The Hardware Software Interface*. Morgan Kaufmann.
 
-4. Oracle. (2023). Java Thread Documentation. https://docs.oracle.com/javase/tutorial/essential/concurrency/
+4. Oracle. (2023). [Java Thread Documentation](https://docs.oracle.com/javase/tutorial/essential/concurrency/).
 
-5. The Project Gutenberg. (2023). Clarissa Harlowe; or the history of a young lady. Retrieved from https://www.gutenberg.org/
+5. Project Gutenberg. (2023). [Clarissa Harlowe; or the history of a young lady](https://www.gutenberg.org/).
 
-6. Amdahl, G. M. (1967). Validity of the single processor approach to achieving large scale computing capabilities. Proceedings of the April 18-20, 1967, spring joint computer conference (pp. 483-485).
+6. Amdahl, G. M. (1967). *Validity of the single processor approach to achieving large scale computing capabilities*. Proceedings of the April 18-20, 1967, spring joint computer conference (pp. 483-485).
 
-7. Apache PDFBox. (2023). Reading PDF Documents. https://pdfbox.apache.org/
+7. McCool, M. D., Robison, A. D., & Reinders, J. (2012). *Structured Parallel Programming: Patterns for Efficient Computation*. Morgan Kaufmann.
 
-8. Apache Commons Math. (2023). Statistics Documentation. https://commons.apache.org/proper/commons-math/
+8. Apache PDFBox. (2023). [Reading PDF Documents](https://pdfbox.apache.org/).
+
+9. Apache Commons Math. (2023). [Statistics Documentation](https://commons.apache.org/proper/commons-math/).
 
 ## 📄 Licença
 
-Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
+Este projeto está licenciado sob a [Licença MIT](LICENSE) - veja o arquivo LICENSE para detalhes.
+
+---
+
+<div align="center">
+  <p>Desenvolvido com ❤️ para a disciplina de Sistemas Paralelos e Distribuídos</p>
+  <p>Instituto Federal de Educação, Ciência e Tecnologia do Sudeste de Minas Gerais, Campus Rio Pomba</p>
+</div>
