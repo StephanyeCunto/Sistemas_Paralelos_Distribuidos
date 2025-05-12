@@ -13,8 +13,6 @@ public class CountWordsParalelo {
     AtomicInteger[] searchWordsCount;
     int threads;
 
-    int timeRead;
-
     Map<String, Integer> wordMap = new HashMap<>();
     
     public static void main(String[] args) {
@@ -24,7 +22,7 @@ public class CountWordsParalelo {
     private void run(String[] args){
         initialize(args);
         intiializeThread();
-        loadResults();
+      //  loadResults();
     }
 
     private void initialize(String[] args){
@@ -67,7 +65,7 @@ public class CountWordsParalelo {
             thread[i].start();
         }
 
-        for(int i=0; i< threads;i++){
+        for(int i=0; i< threads; i++){
             try{
             thread[i].join();
             }catch(InterruptedException e){
