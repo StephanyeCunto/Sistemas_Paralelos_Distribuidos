@@ -13,6 +13,7 @@ public class OpenPDF {
     private String[] words;
 
     public OpenPDF(String filePath) {
+        long startTime = System.currentTimeMillis();
         File file = new File(filePath);
         openPDF(file);
     }
@@ -28,10 +29,9 @@ public class OpenPDF {
 
     private void extractWords(String text){
         words = Arrays.stream(text.split("\\s+"))
-        .map(word -> word.replaceAll("[^a-zA-Z]", ""))
+        .map(word -> word.replaceAll("[^a-zA-Z]", " "))
         .map(String::trim)
         .map(String::toLowerCase)
-        .filter(Objects::nonNull)
         .filter(word -> !word.isEmpty()).toArray(String[]:: new);
     }
 }

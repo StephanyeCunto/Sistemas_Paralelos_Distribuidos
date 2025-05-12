@@ -52,15 +52,16 @@ public abstract class Programas {
 
     protected void closeProcess(Process process){
         try{
-            process.waitFor(); 
-        }catch(InterruptedException e){
+            if (!process.waitFor(5, java.util.concurrent.TimeUnit.SECONDS)) {
+                process.destroyForcibly();
+            }
+            }catch(InterruptedException e){
             System.out.println("Não foi possível fechar o processo: "+e);
             if (process.isAlive()) {
                 process.destroyForcibly();
                 System.out.println("Processo forçado a fechar");
             }
         }
-
     }
 
     protected List<String> createCommand(int i, String process){
@@ -84,6 +85,7 @@ public abstract class Programas {
     protected void writeWordsToProcess(OutputStream os){
 
         long startTime = System.currentTimeMillis();
+        
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os))) {
             for (String word : WORDS) {
                 writer.write(word);
@@ -95,13 +97,5 @@ public abstract class Programas {
         }
 
         timeWrite = System.currentTimeMillis() - startTime;
-    }
-
-    protected int getTimeReader(String resultSearch){
-        return Integer.parseInt(resultSearch);
-    }                       
-
-    protected int getTime(int startTime,String resultSearch){
-        return (int)System.currentTimeMillis() - startTime - getTimeReader(resultSearch);
-    }
+    }                     
 }

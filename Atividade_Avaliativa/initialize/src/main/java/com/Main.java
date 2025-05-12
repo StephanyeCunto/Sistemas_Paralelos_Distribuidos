@@ -8,7 +8,7 @@ public class Main {
 
     private final int[] THREAD = {2,4,8};
 
-    private final int INTERATIONS = 30;
+    private final int INTERATIONS = 10;
 
     private String[] words;
 

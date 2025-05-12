@@ -12,8 +12,6 @@ public class CountWordsSequencial {
     int[] searchWordsCount;
 
     Map<String, Integer> wordMap = new HashMap<>();
-
-    int timeRead;
     
     public static void main(String[] args) {
         new CountWordsSequencial().run(args);
@@ -22,7 +20,7 @@ public class CountWordsSequencial {
     private void run(String[] args){
         initialize(args);
         searchWords();
-        loadResults();
+    //    loadResults();
     }
 
     private void initialize(String[] args){
@@ -32,7 +30,6 @@ public class CountWordsSequencial {
             wordMap.put(args[i], i);
         }
 
- 
         loadWords();
     }
 
