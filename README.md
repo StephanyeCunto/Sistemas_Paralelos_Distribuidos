@@ -36,11 +36,12 @@ Responsável pela coordenação geral do benchmark, incluindo:
 ### 2. Módulo Sequencial
 Implementa a estratégia de contagem sequencial:
 - Recebe as palavras a serem contadas como argumentos
-- Processa o texto palavra por palavra
+- Processa o texto palavra por palavra em tempo real, sem armazenamento em memória
 - Contabiliza as ocorrências de cada palavra alvo
 
 ### 3. Módulo Paralelo
 Implementa a estratégia de contagem com paralelismo:
+- Carrega todas as palavras em um array em memória antes do processamento
 - Divide o processamento entre múltiplas threads
 - Utiliza estruturas thread-safe para contabilização concorrente
 - Permite parametrização do número de threads
@@ -72,7 +73,6 @@ classDiagram
         #String[][] SEARCH_WORDS
         #int INTERATIONS
         #String[] WORDS
-        #long timeWrite
         #abstract initialize() void
         #initializeProcess(List~String~ command) Process
         #getResultSearch(Process process) String[]
@@ -80,12 +80,10 @@ classDiagram
         #closeProcess(Process process) void
         #createCommand(int i, String process) List~String~
         #writeWordsToProcess(OutputStream os) void
-        #getTimeReader(String resultSearch) int
-        #getTime(int startTime, String resultSearch) int
+        #getTime(String resultSearch) int
         +getSEARCH_WORDS() String[][]
         +getINTERATIONS() int
         +getWORDS() String[]
-        +getTimeWrite() long
     }
     
     class Sequencial {
@@ -130,12 +128,11 @@ classDiagram
         ~String[] words
         ~int[] searchWordsCount
         ~Map~String, Integer~ wordMap
-        ~int timeRead
         +main(String[] args) void
         -run(String[] args) void
         -initialize(String[] args) void
         -loadWords() void
-        -searchWords() void
+        -searchWord(String word) void
         -loadResults() void
     }
     
@@ -143,14 +140,15 @@ classDiagram
         ~String[] words
         ~AtomicInteger[] searchWordsCount
         ~int threads
-        ~int timeRead
+        ~BufferedReader reader
         ~Map~String, Integer~ wordMap
         +main(String[] args) void
         -run(String[] args) void
         -initialize(String[] args) void
         -loadWords() void
-        -intiializeThread() void
-        -searchWord(int i, int wordsPerThread) void
+        -initializeThread() void
+        -initializeSearch(int indice, int wordsPerThread) void
+        -searchWord(String word) void
         -loadResults() void
     }
     
@@ -190,13 +188,13 @@ Dois conjuntos de palavras foram testados:
 ```
 ============================================== RESULTADOS DE PERFORMANCE ===============================================
 🔍 CONJUNTO DE PALAVRAS 1
-│ SEQUENCIAL    │ Tempo médio:    52,36 ms │ Desvio padrão:     0,90 ms │
+│ SEQUENCIAL    │ Tempo médio:    64,37 ms │ Desvio padrão:     0,69 ms │
 ├───────────────┼─────────────────────────┼──────────────────────────┼───────────────────┼──────────────────────────────┤
 │   PARALELO    │       TEMPO MÉDIO       │      DESVIO PADRÃO       │      SPEEDUP      │          EFICIÊNCIA          │
 ├───────────────┼─────────────────────────┼──────────────────────────┼───────────────────┼──────────────────────────────┤
-│  2 Threads    │    48,77 ms             │     0,97 ms              │   1,07x           │   53,68%                     │
-│  4 Threads    │    44,85 ms             │     4,68 ms              │   1,17x           │   29,19%                     │
-│  8 Threads    │    51,71 ms             │     6,83 ms              │   1,01x           │   12,66%                     │
+│  2 Threads    │    99,25 ms             │     0,97 ms              │   0,65x           │   32,43%                     │
+│  4 Threads    │   103,93 ms             │     1,80 ms              │   0,62x           │   15,48%                     │
+│  8 Threads    │   111,81 ms             │     2,88 ms              │   0,58x           │    7,20%                     │
 └───────────────┴─────────────────────────┴──────────────────────────┴───────────────────┴──────────────────────────────┘
 ```
 
@@ -204,79 +202,108 @@ Dois conjuntos de palavras foram testados:
 
 ```
 🔍 CONJUNTO DE PALAVRAS 2
-│ SEQUENCIAL    │ Tempo médio:    53,30 ms │ Desvio padrão:     0,87 ms │
+│ SEQUENCIAL    │ Tempo médio:    64,00 ms │ Desvio padrão:     0,00 ms │
 ├───────────────┼─────────────────────────┼──────────────────────────┼───────────────────┼──────────────────────────────┤
 │   PARALELO    │       TEMPO MÉDIO       │      DESVIO PADRÃO       │      SPEEDUP      │          EFICIÊNCIA          │
 ├───────────────┼─────────────────────────┼──────────────────────────┼───────────────────┼──────────────────────────────┤
-│  2 Threads    │    48,57 ms             │     1,56 ms              │   1,10x           │   54,87%                     │
-│  4 Threads    │    42,43 ms             │     5,85 ms              │   1,26x           │   31,40%                     │
-│  8 Threads    │    47,58 ms             │     5,29 ms              │   1,12x           │   14,00%                     │
+│  2 Threads    │    98,64 ms             │     1,13 ms              │   0,65x           │   32,44%                     │
+│  4 Threads    │   103,25 ms             │     1,46 ms              │   0,62x           │   15,50%                     │
+│  8 Threads    │   116,68 ms             │     6,66 ms              │   0,55x           │    6,86%                     │
 └───────────────┴─────────────────────────┴──────────────────────────┴───────────────────┴──────────────────────────────┘
 =======================================================================================================================
 ```
 
 ## 🔍 Análise e Discussão dos Resultados
 
-### Por que obtivemos esses resultados?
+### Por que a versão sequencial foi mais rápida?
 
-Os resultados demonstram que a paralelização trouxe ganhos moderados de desempenho, com o melhor speedup (1,26x) obtido com 4 threads para palavras raras. Este ganho limitado pode ser explicado por vários fatores:
+Contrariamente ao esperado, nossa implementação sequencial superou significativamente a versão paralela em todos os casos. O speedup foi consistentemente menor que 1 (0,55x a 0,65x), indicando uma degradação de desempenho na versão paralela. Este resultado surpreendente pode ser explicado por vários fatores:
 
-1. **Overhead de criação e gerenciamento de threads**: O custo de criar, gerenciar e sincronizar threads pode ultrapassar os ganhos de paralelismo para tarefas relativamente simples como contagem de palavras
+1. **Diferença fundamental na manipulação de dados**: 
+   - A versão sequencial processa cada palavra em streaming (uma por vez), sem armazenar o texto completo em memória
+   - A versão paralela carrega todo o array de palavras antes de iniciar o processamento
    
-2. **Lei de Amdahl**: Mesmo com paralelização perfeita, existe uma porção sequencial no código (como leitura do arquivo e inicialização) que limita o ganho total de desempenho
-   
-3. **Disputa por recursos**: Com mais threads, aumenta a contenção por recursos compartilhados como memória cache e barramentos
+2. **Sobrecarga de gerenciamento de threads**: 
+   - Criar, inicializar e sincronizar threads tem um custo computacional significativo
+   - A comunicação entre threads e o gerenciamento de memória compartilhada introduz latência
 
-4. **Tamanho do problema**: A contagem de palavras pode não ser um problema suficientemente complexo para que o paralelismo compense significativamente
+3. **Contenção de recursos**: 
+   - As estruturas thread-safe (`AtomicInteger`) usadas para contagem concorrente introduzem overhead
+   - A sincronização necessária para garantir a integridade dos dados cria gargalos
 
-A arquitetura do Apple M2 é significativamente diferente de processadores x86. O M2 utiliza uma configuração híbrida com 4 núcleos de alto desempenho e 4 núcleos de eficiência energética, o que pode resultar em comportamentos distintos em cargas paralelas:
+4. **Uso de memória e localidade de cache**:
+   - A versão sequencial tem melhor localidade de cache por processar dados sequencialmente
+   - A versão paralela pode sofrer com invalidações de cache e aumentar a taxa de cache miss
 
-1. **Heterogeneidade de núcleos**: O escalonador do sistema pode priorizar os núcleos de performance para threads com maior prioridade, resultando em desempenho assimétrico entre threads.
+5. **Complexidade do problema**:
+   - A contagem de palavras é uma operação relativamente simples e rápida
+   - O overhead do paralelismo supera os ganhos para operações computacionalmente leves
 
-2. **Memória unificada**: A RAM compartilhada entre CPU e GPU no M2 oferece alta largura de banda mas com capacidade total limitada (8GB), possivelmente limitando ganhos em operações paralelas intensivas em memória.
-
-3. **Pipeline de execução ARM**: A microarquitetura ARM do M2 possui características de execução distintas da arquitetura x86, o que pode alterar o equilíbrio entre processamento e I/O em nosso benchmark.
-
-### Relação do speedup com fatores externos
+### Impacto do hardware utilizado
 
 #### Hardware utilizado
 - **Processador**: Apple Silicon M2 (8 núcleos - 4 de performance e 4 de eficiência)
 - **Memória RAM**: 8GB RAM unificada
 - **Armazenamento**: SSD interno
 
-**Influência**: O hardware tem influência significativa nos resultados. Com 8 threads físicas disponíveis, esperaríamos melhor desempenho para 8 threads lógicas, mas isso não ocorreu. Isso indica que outros fatores como cache, latência de memória e hardware de E/S podem estar limitando o desempenho.
+**Influência do hardware**: A arquitetura do M2 apresenta características particulares que podem amplificar os problemas da implementação paralela:
 
-#### Sistema Operacional
-- **Sistema**: macOS 15.4.1
-- **Java**: OpenJDK 23
+1. **Heterogeneidade de núcleos**: Os 4 núcleos de eficiência do M2 têm desempenho significativamente inferior aos núcleos de performance. Quando distribuímos threads igualmente, algumas podem executar em núcleos mais lentos.
 
-**Influência**: O escalonador do sistema operacional afeta como as threads são distribuídas entre os núcleos. Sistemas operacionais diferentes têm políticas de escalonamento distintas, o que pode favorecer ou prejudicar aplicações paralelas.
+2. **Escalonamento do sistema operacional**: O macOS pode não distribuir idealmente as threads entre os núcleos disponíveis.
 
-#### Linguagem e recursos utilizados
-- **Linguagem**: Java
-- **Biblioteca de paralelismo**: Threads nativas do Java
-- **Estruturas thread-safe**: AtomicInteger
+3. **Memória unificada**: O compartilhamento de memória entre CPU e GPU pode introduzir custos adicionais de sincronização quando múltiplas threads acessam dados.
 
-**Influência**: Java tem overhead de JVM e garbage collection que podem afetar o desempenho paralelo. Comparado a linguagens de mais baixo nível como C/C++, o overhead pode ser maior. Contudo, a JVM também oferece otimizações como JIT que podem compensar parcialmente estas desvantagens.
+### Degradação de desempenho com mais threads
 
-#### Conjunto de dados
-Os resultados mostram uma diferença de comportamento entre os conjuntos de palavras:
-- Para palavras frequentes: Speedup máximo de 1.17x com 4 threads
-- Para palavras raras: Speedup máximo de 1.26x com 4 threads
+É notável que o desempenho piora progressivamente à medida que aumentamos o número de threads:
+- 2 threads: ~0,65x speedup (pior que sequencial)
+- 4 threads: ~0,62x speedup (ainda pior)
+- 8 threads: ~0,55x speedup (o pior caso)
 
-**Influência**: Palavras mais raras resultaram em speedup ligeiramente melhor, possivelmente porque:
-1. Menos contenção ao atualizar contadores (menos colisões em AtomicIntegers)
-2. Melhor localidade de cache quando as palavras são menos frequentes
+Isso sugere que:
 
-#### Por que 4 threads tiveram melhor desempenho?
-1. **Equilíbrio ótimo**: 4 threads proporcionaram o melhor equilíbrio entre paralelismo e overhead
-2. **Arquitetura da CPU**: Se o processador tem 4 núcleos físicos ou um design com compartilhamento de cache L3 entre 4 núcleos, isso explicaria o pico em 4 threads
-3. **Memory bandwidth**: O sistema pode ter atingido o limite de largura de banda de memória com 4 threads, tornando inútil adicionar mais
+1. **O overhead de comunicação cresce linearmente** com o número de threads
+2. **A contenção de recursos aumenta** com mais threads competindo pelos mesmos dados
+3. **Limitação do scheduler**: O sistema operacional pode não conseguir escalonar efetivamente tantas threads, especialmente considerando a arquitetura heterogênea do M2
 
-#### Onde foi possível aumentar a vazão?
-1. **Divisão do trabalho**: A separação do texto em chunks para processamento paralelo foi eficiente
-2. **AtomicInteger**: O uso de estruturas thread-safe permitiu contabilização concorrente sem locks pesados
-3. **Processamento de palavras**: A etapa de busca de palavras no texto é onde o paralelismo trouxe mais benefícios
+### Comparação entre conjuntos de palavras
+
+Os resultados são bastante consistentes entre os dois conjuntos de palavras, com diferenças mínimas:
+
+- Para palavras frequentes: Speedup de 0,65x a 0,58x
+- Para palavras raras: Speedup de 0,65x a 0,55x
+
+Isso indica que a frequência das palavras tem pouco impacto no desempenho relativo, sugerindo que o gargalo está mais relacionado à arquitetura da solução do que aos padrões específicos dos dados.
+
+## 🧠 Lições Aprendidas e Recomendações
+
+### 1. Nem sempre mais é melhor
+
+O paralelismo não é uma solução universal para melhorar o desempenho. Este projeto demonstra claramente que paralelizar tarefas simples pode piorar significativamente o desempenho devido ao overhead introduzido.
+
+### 2. A importância da estratégia de I/O
+
+A diferença fundamental entre as implementações não está apenas no paralelismo, mas na estratégia de manipulação de dados:
+- O processamento de streaming (sequencial) evitou armazenar todo o conjunto de dados na memória
+- A carga completa do array (paralelo) aumentou o uso de memória e possivelmente afetou o desempenho
+
+### 3. Avalie a granularidade da tarefa
+
+Para tarefas de baixa complexidade computacional como contagem de palavras, o overhead do paralelismo pode facilmente superar os ganhos. O paralelismo funciona melhor para:
+- Operações computacionalmente intensivas
+- Problemas facilmente divisíveis com pouca necessidade de comunicação
+- Conjuntos de dados grandes onde o processamento por item é significativo
+
+### 4. Recomendações para melhorar o desempenho paralelo
+
+Se prosseguirmos com a abordagem paralela, poderíamos:
+
+1. **Implementar processamento streaming também na versão paralela**
+2. **Reduzir a granularidade da divisão** (chunks maiores por thread)
+3. **Utilizar estruturas de dados mais eficientes**, como contadores locais por thread com sincronização apenas no final
+4. **Explorar paralelismo em nível de tarefa** em vez de paralelismo de dados
+5. **Adotar um ThreadPool** em vez de criar threads manualmente
 
 ## 🛠️ Tecnologias Utilizadas
 
@@ -328,29 +355,17 @@ java -jar target/initialize-1.0-SNAPSHOT.jar
 
 ## 📝 Conclusões
 
-Este projeto demonstrou e quantificou os desafios e oportunidades da programação paralela aplicada ao problema específico de contagem de palavras. As principais conclusões são:
+Este projeto forneceu informações valiosas sobre os desafios da programação paralela, demonstrando que nem sempre a paralelização resulta em ganhos de desempenho. As principais conclusões são:
 
-1. **Paralelismo nem sempre significa desempenho significativamente melhor**
-   - O speedup máximo de 1,26x é modesto considerando o hardware utilizado
-   - A Lei de Amdahl limita o ganho potencial devido às partes inerentemente sequenciais
+1. **O contexto importa**: Para operações simples como contagem de palavras, o overhead de gerenciamento de threads pode anular quaisquer ganhos de paralelismo.
 
-2. **Existe um "ponto doce" para o número de threads**
-   - 4 threads proporcionaram o melhor equilíbrio entre paralelismo e overhead
-   - Adicionar mais threads além desse ponto piorou o desempenho
+2. **Estratégias de processamento de dados**: A diferença entre processamento streaming e carregamento completo em memória teve impacto significativo no desempenho.
 
-3. **A eficiência cai dramaticamente com o aumento de threads**
-   - De ~54% com 2 threads para ~13% com 8 threads
-   - Demonstra a importância de ajustar o paralelismo às características do problema
+3. **Mais threads nem sempre são melhores**: Adicionar mais threads consistentemente piorou o desempenho, evidenciando que o problema não foi a falta de paralelismo, mas sim o overhead associado.
 
-4. **Características dos dados afetam o desempenho**
-   - Palavras raras permitiram melhor speedup que palavras frequentes
-   - Sugere que padrões de acesso à memória e contenção afetam o paralelismo
+4. **Hardware-específico**: A arquitetura heterogênea do M2 introduz complexidades adicionais para workloads paralelos que podem não estar presentes em CPUs tradicionais.
 
-5. **Estabilidade vs. Desempenho é um trade-off**
-   - Implementações sequenciais mostram menor variabilidade
-   - Implementações paralelas oferecem melhor desempenho médio, mas com maior variabilidade
-
-Este projeto fornece insights valiosos sobre os fatores que influenciam o desempenho de programas paralelos, demonstrando a importância de uma abordagem empírica e baseada em dados para decisões de paralelização.
+Este projeto reforça a importância de realizar benchmarks empíricos antes de optar por soluções paralelas e destaca que o paralelismo deve ser aplicado criteriosamente, considerando cuidadosamente a natureza do problema, o hardware disponível e os overheads associados.
 
 ## 📚 Referências
 
