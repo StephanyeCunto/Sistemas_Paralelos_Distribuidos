@@ -1,10 +1,7 @@
 package com;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 public class CountWordsSequencial {
     String[] words;
@@ -24,9 +21,7 @@ public class CountWordsSequencial {
     private void initialize(String[] args){
         searchWordsCount = new int[args.length];
 
-        for(int i=0; i< args.length; i++){
-            wordMap.put(args[i], i);
-        }
+        for(int i=0; i< args.length; i++) wordMap.put(args[i], i);
 
         loadWords();
     }
@@ -37,7 +32,6 @@ public class CountWordsSequencial {
             while((line = reader.readLine()) != null){
                 searchWord(line);
             }
-
         }catch(IOException e){
             System.out.println("Erro ao receber dados: "+e);
         }
@@ -52,6 +46,5 @@ public class CountWordsSequencial {
         for(String key : wordMap.keySet()){
             System.out.println("Key: "+ key+ " : "+ searchWordsCount[wordMap.get(key)]);
         }
-    }
-        
+    }     
 }

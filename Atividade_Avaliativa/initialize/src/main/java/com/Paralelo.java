@@ -33,11 +33,11 @@ public class Paralelo extends Programas{
                         super.closeProcess(process);
 
                         timeParalelo[i][j][k] = (int) (System.currentTimeMillis() - startTime);
-                          
+ /*                          
                          for(String result : resultSearch){
                             System.out.println(result);
                         }
-                    
+*/
                     }
                 } 
             }

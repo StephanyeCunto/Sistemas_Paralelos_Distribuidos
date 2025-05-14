@@ -1,8 +1,6 @@
 package com;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -10,6 +8,8 @@ public class CountWordsParalelo {
     String[] words;
     AtomicInteger[] searchWordsCount;
     int threads;
+
+    BufferedReader reader;
 
     Map<String, Integer> wordMap = new HashMap<>();
     
@@ -38,16 +38,14 @@ public class CountWordsParalelo {
 
     private void loadWords(){
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
-            words = reader.lines().toArray(String[]::new);
+          words = reader.lines().toArray(String[]::new);
         }catch(IOException e){
             System.out.println("Erro ao receber dados: "+e);
         }
     }
 
     private void initializeSearch(int wordInitial, int limite){
-        for(int i = wordInitial; i < limite;i++){
-            searchWord(words[i]);
-        }
+        for(int i = wordInitial; i < limite;i++) searchWord(words[i]);
     }
 
     private void searchWord(String word){
@@ -60,16 +58,12 @@ public class CountWordsParalelo {
 
         int wordsPerThread = words.length/threads;
 
+        for(int i=0; i < threads; i++){
+            int wordInitial = i * wordsPerThread;
 
-        for(int i=0; i< threads; i++){
-            int index = i;
-
-            int wordInitial = index * wordsPerThread;
-
-            int limite = (index == threads - 1) ? words.length : (index + 1) * wordsPerThread;
+            int limite = (i == threads - 1) ? words.length : (i + 1) * wordsPerThread;
 
             thread[i] = new Thread(()-> initializeSearch(wordInitial,limite));
-
             thread[i].start();
         }
 
