@@ -2,14 +2,12 @@ package com;
 public class Main {
     private String[][] SEARCH_WORDS = {
         { "clarissa", "letter", "lovelace", "virtue", "dear", "miss" },        
-   //     { "clarissa", "letter", "lovelace", "virtue", "dear", "miss" },
-
       { "eita", "bacana", "vixe", "forbidden", "indignation", "oppression" }
     };    
 
-    private final int[] THREAD = {2};
+    private final int[] THREAD = {2,4,8};
 
-    private final int INTERATIONS = 3;
+    private final int INTERATIONS = 30;
 
     private String[] words;
 

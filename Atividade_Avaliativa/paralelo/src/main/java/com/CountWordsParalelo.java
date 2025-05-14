@@ -18,9 +18,15 @@ public class CountWordsParalelo {
     }
 
     private void run(String[] args){
+        long startTime = System.currentTimeMillis();
+
         initialize(args);
         initializeThread();
-    //    loadResults();
+
+        long endTime = System.currentTimeMillis();
+        System.out.println((endTime - startTime));
+
+        loadResults();
     }
 
     private void initialize(String[] args){
@@ -44,7 +50,11 @@ public class CountWordsParalelo {
         }
     }
 
-    private void initializeSearch(int wordInitial, int limite){
+    private void initializeSearch(int indice, int wordsPerThread){
+        int wordInitial = indice * wordsPerThread;
+
+        int limite = (indice == threads - 1) ? words.length : (indice + 1) * wordsPerThread;
+
         for(int i = wordInitial; i < limite;i++) searchWord(words[i]);
     }
 
@@ -59,11 +69,9 @@ public class CountWordsParalelo {
         int wordsPerThread = words.length/threads;
 
         for(int i=0; i < threads; i++){
-            int wordInitial = i * wordsPerThread;
+            int indice = i;
 
-            int limite = (i == threads - 1) ? words.length : (i + 1) * wordsPerThread;
-
-            thread[i] = new Thread(()-> initializeSearch(wordInitial,limite));
+            thread[i] = new Thread(()-> initializeSearch(indice,wordsPerThread));
             thread[i].start();
         }
 

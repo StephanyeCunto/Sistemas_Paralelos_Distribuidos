@@ -35,11 +35,11 @@ public class ProcessData {
         this.timeSequencialAverage = new double[timeSequencial.length];
         this.timeSequencialStdDev = new double[timeSequencial.length];
 
-           this.timeParaleloAverage = new double[timeParalelo.length][threads.length];
-           this.timeParaleloStdDev = new double[timeParalelo.length][threads.length];
+        this.timeParaleloAverage = new double[timeParalelo.length][threads.length];
+        this.timeParaleloStdDev = new double[timeParalelo.length][threads.length];
 
-           this.speedup = new double[timeParalelo.length][threads.length];
-           this.efficiency = new double[timeParalelo.length][threads.length];
+        this.speedup = new double[timeParalelo.length][threads.length];
+        this.efficiency = new double[timeParalelo.length][threads.length];
 
         processData();
     }

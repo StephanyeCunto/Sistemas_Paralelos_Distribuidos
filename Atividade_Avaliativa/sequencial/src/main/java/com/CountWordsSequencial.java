@@ -14,8 +14,14 @@ public class CountWordsSequencial {
     }
 
     private void run(String[] args){
+        long startTime = System.currentTimeMillis();
+
         initialize(args);
-       // loadResults();
+
+        long endTime = System.currentTimeMillis();
+        System.out.println((endTime - startTime));
+
+        loadResults();
     }
 
     private void initialize(String[] args){
@@ -29,9 +35,7 @@ public class CountWordsSequencial {
    private void loadWords(){
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
             String line;
-            while((line = reader.readLine()) != null){
-                searchWord(line);
-            }
+            while((line = reader.readLine()) != null) searchWord(line);
         }catch(IOException e){
             System.out.println("Erro ao receber dados: "+e);
         }

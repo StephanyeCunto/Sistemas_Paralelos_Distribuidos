@@ -22,7 +22,6 @@ public class Paralelo extends Programas{
         for(int i = 0; i < super.getSEARCH_WORDS().length; i++){
             for(int j = 0; j < THREAD.length; j++){
                 for(int k = 0; k < super.getINTERATIONS(); k++){
-                    long startTime= System.currentTimeMillis();
 
                     List<String> command = super.createCommand(i,"paralelo");
                     command.addLast(String.valueOf(THREAD[j]));
@@ -32,9 +31,9 @@ public class Paralelo extends Programas{
                         String[] resultSearch = super.getResultSearch(process);
                         super.closeProcess(process);
 
-                        timeParalelo[i][j][k] = (int) (System.currentTimeMillis() - startTime);
- /*                          
-                         for(String result : resultSearch){
+                        timeParalelo[i][j][k] = super.getTime(resultSearch);
+                          
+ /*                         for(String result : resultSearch){
                             System.out.println(result);
                         }
 */

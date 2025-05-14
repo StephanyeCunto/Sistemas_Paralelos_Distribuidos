@@ -26,10 +26,13 @@ public abstract class Programas {
         return null;
     }
 
+    protected int getTime(String[] results ){
+        return Integer.parseInt(results[0]); 
+    }
+
     protected String[] getResultSearch(Process process){
         try(BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))){
             return (reader.lines().toList()).toArray(new String[0]);
-
         }catch (IOException e) {
             System.out.println("Erro ao receber saída do programa: "+e);
         }
