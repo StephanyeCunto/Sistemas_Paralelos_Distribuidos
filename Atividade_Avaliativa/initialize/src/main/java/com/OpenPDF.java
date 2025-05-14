@@ -27,10 +27,8 @@ public class OpenPDF {
     }
 
     private void extractWords(String text){
-        words = Arrays.stream(text.split("\\s+"))
-        .map(word -> word.replaceAll("[^a-zA-Z]", " "))
-        .map(String::trim)
-        .map(String::toLowerCase)
-        .filter(word -> !word.isEmpty()).toArray(String[]:: new);
+        words = Arrays.stream(text.replaceAll("[^a-zA-Z\\s]", " ").toLowerCase().trim()
+        .split("\\s+"))
+        .filter(word -> !word.isEmpty()).toArray(String[]::new);
     }
 }

@@ -28,21 +28,18 @@ public abstract class Programas {
 
     protected String[] getResultSearch(Process process){
         try(BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))){
-            List<String> lines = reader.lines().toList();
-            String[] results = lines.toArray(new String[0]);
-            return results;
+            return (reader.lines().toList()).toArray(new String[0]);
+
         }catch (IOException e) {
             System.out.println("Erro ao receber saída do programa: "+e);
         }
-
         return null;
     }
 
     protected String[] getErro(Process process){
         try(BufferedReader readerError = new BufferedReader(new InputStreamReader(process.getErrorStream()))){
-            List<String> lines = readerError.lines().toList();
-            String[] results = lines.toArray(new String[0]);
-            return results;
+            return (readerError.lines().toList()).toArray(new String[0]);
+
         }catch ( IOException e){
             System.out.println("Erro ao tentar exibir erro: "+e);
         }
@@ -51,10 +48,8 @@ public abstract class Programas {
 
     protected void closeProcess(Process process){
         try{
-            if (!process.waitFor(5, java.util.concurrent.TimeUnit.SECONDS)) {
-                process.destroyForcibly();
-            }
-            }catch(InterruptedException e){
+            if (!process.waitFor(5, java.util.concurrent.TimeUnit.SECONDS)) process.destroyForcibly();
+        }catch(InterruptedException e){
             System.out.println("Não foi possível fechar o processo: "+e);
             if (process.isAlive()) {
                 process.destroyForcibly();
@@ -65,23 +60,18 @@ public abstract class Programas {
 
     protected List<String> createCommand(int i, String process){
         List<String> command = new ArrayList<>();
-        if(process == "paralelo"){
-            command.addAll(List.of("java", "-jar", "paralelo/target/paralelo-1.0-SNAPSHOT.jar"));
-            for (String word : SEARCH_WORDS[i]) {
-                command.add(word);
-            }
+        String jarPath = process.equals("paralelo") ? "paralelo/target/paralelo-1.0-SNAPSHOT.jar"
+        : "sequencial/target/sequencial-1.0-SNAPSHOT.jar";
     
-            return command;
-        }
-        command.addAll(List.of("java", "-jar", "sequencial/target/sequencial-1.0-SNAPSHOT.jar"));
-        for (String word : SEARCH_WORDS[i]) {
-            command.add(word);
-        }
-
+        command.addAll(List.of("java", "-jar", jarPath));
+    
+        for (String word : SEARCH_WORDS[i]) command.add(word);
+    
         return command;
     }
+    
 
-    protected void writeWordsToProcess(OutputStream os){        
+    private void writeWordsToProcess(OutputStream os){        
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os))) {
             for (String word : WORDS) {
                 writer.write(word);

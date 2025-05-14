@@ -23,7 +23,7 @@ public class CountWordsSequencial {
 
     private void initialize(String[] args){
         searchWordsCount = new int[args.length];
-        
+
         for(int i=0; i< args.length; i++){
             wordMap.put(args[i], i);
         }

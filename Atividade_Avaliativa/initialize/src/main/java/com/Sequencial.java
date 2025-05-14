@@ -27,12 +27,12 @@ public class Sequencial extends Programas{
                 if(process!= null){ 
                     String[] resultSearch = super.getResultSearch(process);
                     super.closeProcess(process);
-                    timeSequencial[i][j] = (int) (System.currentTimeMillis() - startTime);
- 
+                    timeSequencial[i][j] = (int) (System.currentTimeMillis() - startTime );
+/* 
                     for(String result : resultSearch){
                         System.out.println(result);
                     }
-                      
+                    */   
                 }
 
             }
