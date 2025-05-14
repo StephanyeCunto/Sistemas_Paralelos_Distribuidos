@@ -8,7 +8,7 @@ public class Sequencial extends Programas{
     private int[][] timeSequencial;
 
     public Sequencial(String[][] SEARCH_WORDS, int INTERATIONS,String[] WORDS){
-        super(SEARCH_WORDS, INTERATIONS, WORDS,0);
+        super(SEARCH_WORDS, INTERATIONS, WORDS);
         this.timeSequencial = new int[SEARCH_WORDS.length][INTERATIONS];
 
         initialize();
@@ -27,12 +27,12 @@ public class Sequencial extends Programas{
                 if(process!= null){ 
                     String[] resultSearch = super.getResultSearch(process);
                     super.closeProcess(process);
-                    timeSequencial[i][j] = (int) (System.currentTimeMillis() - startTime - super.getTimeWrite());
-/* 
+                    timeSequencial[i][j] = (int) (System.currentTimeMillis() - startTime);
+ 
                     for(String result : resultSearch){
                         System.out.println(result);
                     }
-                    */   
+                      
                 }
 
             }

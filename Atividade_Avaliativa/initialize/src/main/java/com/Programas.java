@@ -12,7 +12,6 @@ public abstract class Programas {
     private final String[][] SEARCH_WORDS;
     private final int INTERATIONS;
     private final String[] WORDS;
-    private long timeWrite;
 
     protected abstract void initialize();
 
@@ -82,10 +81,7 @@ public abstract class Programas {
         return command;
     }
 
-    protected void writeWordsToProcess(OutputStream os){
-
-        long startTime = System.currentTimeMillis();
-        
+    protected void writeWordsToProcess(OutputStream os){        
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os))) {
             for (String word : WORDS) {
                 writer.write(word);
@@ -95,7 +91,5 @@ public abstract class Programas {
         }catch(IOException e){
             System.out.println("Impossível enviar os dados: "+e);
         }
-
-        timeWrite = System.currentTimeMillis() - startTime;
     }                     
 }

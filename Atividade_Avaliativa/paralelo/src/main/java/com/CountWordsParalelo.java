@@ -3,9 +3,7 @@ package com;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class CountWordsParalelo {
@@ -21,20 +19,18 @@ public class CountWordsParalelo {
 
     private void run(String[] args){
         initialize(args);
-        intiializeThread();
-      //  loadResults();
+        initializeThread();
+    //    loadResults();
     }
 
     private void initialize(String[] args){
         threads = Integer.parseInt(args[args.length - 1]);
 
         searchWordsCount = new AtomicInteger[args.length - 1];
-        for (int i = 0; i < searchWordsCount.length; i++) {
-            searchWordsCount[i] = new AtomicInteger();
-        }
 
         for(int i=0; i< args.length-1; i++){
             wordMap.put(args[i], i);
+            searchWordsCount[i] = new AtomicInteger();
         }
 
         loadWords();
@@ -42,26 +38,38 @@ public class CountWordsParalelo {
 
     private void loadWords(){
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
-            ArrayList<String> wordsAux = new ArrayList<>();
-            String line;
-            while((line = reader.readLine()) != null){
-                wordsAux.add(line);
-            }
-
-            words = wordsAux.toArray(new String[0]);
+            words = reader.lines().toArray(String[]::new);
         }catch(IOException e){
             System.out.println("Erro ao receber dados: "+e);
         }
     }
 
-    private void intiializeThread() {
+    private void initializeSearch(int wordInitial, int limite){
+        for(int i = wordInitial; i < limite;i++){
+            searchWord(words[i]);
+        }
+    }
+
+    private void searchWord(String word){
+        Integer index = wordMap.get(word);
+        if (index != null) searchWordsCount[index].incrementAndGet();
+    }
+
+    private void initializeThread() {
         Thread[] thread = new Thread[threads];
 
         int wordsPerThread = words.length/threads;
 
+
         for(int i=0; i< threads; i++){
             int index = i;
-            thread[i] = new Thread(()->searchWord(index, wordsPerThread));
+
+            int wordInitial = index * wordsPerThread;
+
+            int limite = (index == threads - 1) ? words.length : (index + 1) * wordsPerThread;
+
+            thread[i] = new Thread(()-> initializeSearch(wordInitial,limite));
+
             thread[i].start();
         }
 
@@ -71,18 +79,6 @@ public class CountWordsParalelo {
             }catch(InterruptedException e){
                 System.out.println("Erro ao finalizar a thread "+i+", "+ e);
             }
-        }
-    }
-
-    private void searchWord(int i, int wordsPerThread){
-        int wordInitial = i*wordsPerThread;
-        int limite = wordInitial + wordsPerThread;
-
-        if(i == threads-1) limite = words.length;
-
-        for(int j=wordInitial; j< limite; j++){
-            Integer index = wordMap.get(words[j]);
-            if (index != null) searchWordsCount[index].incrementAndGet();
         }
     }
 

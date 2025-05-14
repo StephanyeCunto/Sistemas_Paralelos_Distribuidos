@@ -13,7 +13,6 @@ public class OpenPDF {
     private String[] words;
 
     public OpenPDF(String filePath) {
-        long startTime = System.currentTimeMillis();
         File file = new File(filePath);
         openPDF(file);
     }

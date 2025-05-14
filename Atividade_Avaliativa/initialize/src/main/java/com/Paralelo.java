@@ -10,7 +10,7 @@ public class Paralelo extends Programas{
     private int[][][] timeParalelo;
 
     public Paralelo(String[][] SEARCH_WORDS, int[] THREAD,int INTERATIONS,String[] WORDS){
-        super(SEARCH_WORDS, INTERATIONS,WORDS,0);
+        super(SEARCH_WORDS, INTERATIONS,WORDS);
         this.THREAD = THREAD;
         timeParalelo = new int[super.getSEARCH_WORDS().length][this.THREAD.length][super.getINTERATIONS()];
         
@@ -32,12 +32,12 @@ public class Paralelo extends Programas{
                         String[] resultSearch = super.getResultSearch(process);
                         super.closeProcess(process);
 
-                        timeParalelo[i][j][k] = (int) (System.currentTimeMillis() - startTime  - super.getTimeWrite());
-                    /*     
+                        timeParalelo[i][j][k] = (int) (System.currentTimeMillis() - startTime);
+                          
                          for(String result : resultSearch){
                             System.out.println(result);
                         }
-                    */
+                    
                     }
                 } 
             }

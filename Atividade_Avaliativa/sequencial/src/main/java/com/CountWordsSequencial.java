@@ -3,7 +3,6 @@ package com;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,8 +18,7 @@ public class CountWordsSequencial {
 
     private void run(String[] args){
         initialize(args);
-        searchWords();
-    //    loadResults();
+       // loadResults();
     }
 
     private void initialize(String[] args){
@@ -35,23 +33,19 @@ public class CountWordsSequencial {
 
    private void loadWords(){
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
-            ArrayList<String> wordsAux = new ArrayList<>();
             String line;
             while((line = reader.readLine()) != null){
-                wordsAux.add(line);
+                searchWord(line);
             }
 
-            words = wordsAux.toArray(new String[0]);
         }catch(IOException e){
             System.out.println("Erro ao receber dados: "+e);
         }
     }
 
-    private void searchWords() {
-        for (String word : words) {
-            Integer index = wordMap.get(word);
-            if (index != null) searchWordsCount[index]++;
-        }
+    private void searchWord(String word){
+        Integer index = wordMap.get(word);
+        if (index != null) searchWordsCount[index]++;
     }
 
     private void loadResults(){
