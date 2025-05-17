@@ -1,10 +1,33 @@
-{
-  "Itens": [
-    {
-      "Name": "agua com gás"
-    },
-    {
-      "Name": "agua com gás"
-    }
-  ]
-}
+[
+  {
+    "Name": "teste a"
+  },
+  {
+    "Name": "teste c"
+  },
+  {
+    "Name": "teste d"
+  },
+  {
+    "Name": "teste e"
+  },
+  {
+    "Name": "teste a"
+  },
+  {
+    "Name": "teste a"
+  },
+  {
+    "Name": "teste a"
+  },
+  {
+    "Name": "teste a"
+  },
+  {
+    "Name": "teste a"
+  },
+  {
+    "Name": "teste b",
+    "Preco": 12
+  }
+]
