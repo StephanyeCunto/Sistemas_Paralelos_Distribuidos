@@ -42,7 +42,6 @@ public abstract class Programas {
     protected String[] getErro(Process process){
         try(BufferedReader readerError = new BufferedReader(new InputStreamReader(process.getErrorStream()))){
             return (readerError.lines().toList()).toArray(new String[0]);
-
         }catch ( IOException e){
             System.out.println("Erro ao tentar exibir erro: "+e);
         }

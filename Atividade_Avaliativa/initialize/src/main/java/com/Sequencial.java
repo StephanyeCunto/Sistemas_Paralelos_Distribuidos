@@ -18,7 +18,6 @@ public class Sequencial extends Programas{
     protected void initialize(){
         for(int i = 0; i < super.getSEARCH_WORDS().length; i++){
             for(int j = 0; j < super.getINTERATIONS(); j++){
-                long startTime= System.currentTimeMillis();
 
                 List<String> command = super.createCommand(i,"sequencial");
 

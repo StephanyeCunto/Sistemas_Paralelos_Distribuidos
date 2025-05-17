@@ -44,7 +44,7 @@ public class CountWordsParalelo {
 
     private void loadWords(){
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
-          words = reader.lines().toArray(String[]::new);
+            words = reader.lines().toArray(String[]::new);
         }catch(IOException e){
             System.out.println("Erro ao receber dados: "+e);
         }
@@ -77,7 +77,7 @@ public class CountWordsParalelo {
 
         for(int i=0; i< threads; i++){
             try{
-            thread[i].join();
+                thread[i].join();
             }catch(InterruptedException e){
                 System.out.println("Erro ao finalizar a thread "+i+", "+ e);
             }
