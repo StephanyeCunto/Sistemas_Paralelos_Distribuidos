@@ -1,20 +1,8 @@
 [
   {
-    "Name": "teste a"
-  },
-  {
-    "Name": "teste c"
-  },
-  {
-    "Name": "agua"
-  },
-  {
-    "Name": "agua"
-  },
-  {
-    "Name": "agua"
-  },
-  {
-    "Name": "agua"
+    "name": "Coisa aleatoria",
+    "quantity": 8,
+    "price": null,
+    "isPurchased": false
   }
 ]

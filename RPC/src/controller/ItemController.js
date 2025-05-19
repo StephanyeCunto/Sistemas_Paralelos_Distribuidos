@@ -17,14 +17,12 @@ export class ItemController{
     }
 
     handleCreate(err,params, callback){
-        this.itemDAO.create(params);
+        this.itemDAO.create(params[0]);
         callback(null, `Item adicionado com sucesso.`);
     }
 
     handleDelete(err, params, callback){
-        const item = this.itemDAO.findItemByName(params[0]);
-        if(item) this.itemDAO.delete(item);
-        const items = this.itemDAO.getItems();
+        this.itemDAO.deleteByName(params[0]);
         callback(null,"Item deletado");
     }
 
@@ -32,11 +30,11 @@ export class ItemController{
         const item = this.itemDAO.findItemByName(params[0]);
         if(item) this.itemDAO.update(item,params[1]);
         const items = this.itemDAO.getItems();
-        callback(null,"Item auterado");
+        callback(null,"Item alterado");
     }
 
     handleRead(err, params, callback){
-        const items = this.itemDAO.getItems();
+        const items = this.itemDAO.getAll();
         callback(null,items);
     }
 
