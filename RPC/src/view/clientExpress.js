@@ -1,5 +1,6 @@
 import express from 'express';
-import { clientRPC } from './clientRPC.js'
+
+import { clientRPC } from '../services/RpcClient.js'
 
 const app = express();
 const PORT = 3000;
