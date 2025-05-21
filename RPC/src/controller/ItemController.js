@@ -28,8 +28,7 @@ export class ItemController{
 
     handleUpdate(err, params, callback){
         const item = this.itemDAO.findItemByName(params[0]);
-        if(item) this.itemDAO.update(item,params[1]);
-        const items = this.itemDAO.getItems();
+        if(item) this.itemDAO.update(item,params[1],params[2],params[3]);
         callback(null,"Item alterado");
     }
 

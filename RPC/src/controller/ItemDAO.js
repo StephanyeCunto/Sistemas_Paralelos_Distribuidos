@@ -8,17 +8,19 @@ export class ItemDAO{
     create(params){
         const itemNew = new Item(this.toUpperFirstLowerRest(params));
         const itemInList = this.findItemByName(itemNew.name);
-        if(itemInList) this.updateQuantity(itemInList,1);
+        if(itemInList) this.update(itemInList,1);
         else this.addItem(itemNew);
     }
 
-    toUpperFirstLowerRest(str) {
+    toUpperFirstLowerRest(str = str.trim()) {
         str = str.trim();
         return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
     }
 
-    updateQuantity(item,quantity){
-        item.quantity = item.quantity + quantity;
+    update(item,quantity = null,price = null,isPurchased = null){
+        if(quantity != null) item.quantity += quantity;
+        if(price != null) item.price = price;
+        if(isPurchased != null) item.isPurchased = isPurchased;
         this.deleteByName(item.name);
         this.addItem(item);
     }
@@ -37,51 +39,17 @@ export class ItemDAO{
         fs.writeFileSync(LOCAL_JSON_PATH , JSON.stringify(items, null, 2));
     }
 
-    findItemByName(name){
+    findItemByName(itemName){
         const items = this.getAll();
-        const foundItem = items.find(item => item.name === name);
-        if(foundItem) {
-            return foundItem;
-        }
-        return null;
+        const itemFind = this.toUpperFirstLowerRest(itemName);
+        const foundItem = items.find(item => item.name === itemFind);
+        if(foundItem) return foundItem;
+        return null;    
     }
 
-    deleteByName(item){
-        item = this.toUpperFirstLowerRest(item);
-        const items = this.getAll().filter(items => items.name !== item);
+    deleteByName(itemName){
+        itemName = this.toUpperFirstLowerRest(itemName);
+        const items = this.getAll().filter(item => item.name !== itemName);
         this.saveItems(items);
     }
-
-/*
-    update(item,price){
-        const items = this.getAll();
-        const index = items.findIndex(items => items.Name === item.Name);
-        if(index > -1) items[index] = { Name: item.Name, Preco: price };
-        this.saveItems(items);
-    }
-    
-    delete(item){
-        const items = this.getAll().filter(items => items.Name !== item.Name);
-        this.saveItems(items);
-    }
-    
-    findItemByName(name){
-        const items = this.getAll();
-        return items.find(item => item.Name === name);
-    }
-    
-    getAll(){
-        return JSON.parse(fs.readFileSync(LOCAL_JSON_PATH, 'utf8'));
-    }
-    
-    createItemPurchased(item,price){
-        return {Name: item.Name , Preco: price}
-    }
-    
-    saveItems(items){
-        fs.writeFileSync(LOCAL_JSON_PATH , JSON.stringify(items, null, 2));
-        console.log(this.getAll());
-    }
-
-    */
 }
