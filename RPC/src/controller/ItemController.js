@@ -1,6 +1,6 @@
 import { RpcServer } from '../services/RpcServer.js';
 
-import { ItemDAO } from './ItemDAO.js';
+import { ItemDAO } from '../dao/ItemDAO.js';
 
 export class ItemController{
     constructor(){

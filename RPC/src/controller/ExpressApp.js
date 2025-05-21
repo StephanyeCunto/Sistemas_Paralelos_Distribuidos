@@ -6,7 +6,7 @@ const app = express();
 const PORT = 3000;
 const rpc = new clientRPC();
 
-app.use(express.static('public'));
+app.use(express.static('../view'));
 
 app.get('/addItem', (req, res) => {
   rpc.addItem();
