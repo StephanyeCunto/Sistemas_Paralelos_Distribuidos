@@ -2,18 +2,18 @@ import pkg from 'xmlrpc';
 
 const { createClient } = pkg;
 
+export class clientRPC{
+  addItem(){
+    const client = createClient({ host: '127.0.0.1', port: 9090, path: '/' });
 
-function addItem(){
-  console.log("ok ok");
-  const client = createClient({ host: '127.0.0.1', port: 9090, path: '/' });
-
-  client.methodCall('create',["agua"], function (error, value) {
-    if (error) console.error(error);
-    else console.log('Resposta do servidor:', value);
-  });
+    client.methodCall('create',["agua"], function (error, value) {
+      if (error) console.error(error);
+      else console.log('Resposta do servidor:', value);
+    });
+  }
 }
 
-window.addItem = addItem;
+
 
 /*
 client.methodCall('create',["agua"], function (error, value) {

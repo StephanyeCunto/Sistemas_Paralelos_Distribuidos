@@ -5,7 +5,7 @@ const { createServer } = pkg;
 export class RpcServer{
     constructor(){
         try {
-            this.server = createServer({ host: '0.0.0.0', port: 9090 });
+            this.server = createServer({ host: '127.0.0.1', port: 9090 });
         } catch (err) {
             console.error("Erro ao iniciar o servidor RPC:", err);
         }
@@ -18,7 +18,5 @@ export class RpcServer{
             console.error(`Erro no handler do método ${method}:`, e);
             callback({ faultCode: -32500, faultString: 'Erro interno do servidor RPC' });
         }
-    }
-
-    
+    }  
 }
