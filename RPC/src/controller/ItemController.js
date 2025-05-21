@@ -8,7 +8,6 @@ export class ItemController{
         this.itemDAO = new ItemDAO();
         this.registerHandlers();
     }
-
     registerHandlers() {
         this.server.on('create', this.handleCreate.bind(this));
         this.server.on('read', this.handleRead.bind(this));
