@@ -8,7 +8,7 @@ export class ItemDAO{
     create(params){
         const itemNew = new Item(this.toUpperFirstLowerRest(params));
         const itemInList = this.findItemByName(itemNew.name);
-        if(itemInList) this.update(itemInList,1);
+        if(itemInList) this.update(itemInList,itemInList.quantity+1);
         else this.addItem(itemNew);
     }
 
@@ -18,9 +18,9 @@ export class ItemDAO{
     }
 
     update(item,quantity = null,price = null,isPurchased = null){
-        if(quantity != null) item.quantity += quantity;
-        if(price != null) item.price = price;
-        if(isPurchased != null) item.isPurchased = isPurchased;
+        if(quantity != null && quantity > 0) item.quantity = quantity;
+        if(price != null && price > 0) item.price = price;
+        if(isPurchased != null && isPurchased.length > 0) item.isPurchased = isPurchased;
         this.deleteByName(item.name);
         this.addItem(item);
     }
@@ -49,7 +49,10 @@ export class ItemDAO{
 
     deleteByName(itemName){
         itemName = this.toUpperFirstLowerRest(itemName);
-        const items = this.getAll().filter(item => item.name !== itemName);
+
+        const originalItems= this.getAll();
+        const items = originalItems.filter(item => item.name !== itemName);
         this.saveItems(items);
+        return(items.length < originalItems.length);
     }
 }

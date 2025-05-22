@@ -2,13 +2,7 @@
   {
     "name": "Coisa aleatoria",
     "quantity": 9,
-    "price": null,
-    "isPurchased": false
-  },
-  {
-    "name": "Agua",
-    "quantity": 17,
-    "price": null,
+    "price": 3,
     "isPurchased": false
   }
 ]

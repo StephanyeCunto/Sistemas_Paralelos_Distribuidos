@@ -13,7 +13,7 @@ export class RpcServer{
 
     on(method, handler) {
         try{
-        this.server.on(method, handler);
+            this.server.on(method, handler);
         } catch (e) {
             console.error(`Erro no handler do método ${method}:`, e);
             callback({ faultCode: -32500, faultString: 'Erro interno do servidor RPC' });
