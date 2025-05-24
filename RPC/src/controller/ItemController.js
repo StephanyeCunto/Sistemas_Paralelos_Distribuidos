@@ -34,7 +34,7 @@ export class ItemController{
         let item;
         if(params[1] != null && params[1] <= 0)return callback(null, `Quantidade inválida.`);
         if(params[2] !== null && params[2] <= 0) return callback(null, `Preço inválida`);
-        if(params[3].length !== null  && typeof params[3] !== "boolean") return callback(null, `Disponibilidade inválida (esperado true ou false).`);
+        if(params[3] !== null  && typeof params[3] !== "boolean") return callback(null, `Disponibilidade inválida (esperado true ou false).`);
         if(item = this.itemDAO.findItemByName(params[0])){
             this.itemDAO.update(item,params[1],params[2],params[3]);
             return callback(null, `Item alterado com sucesso.`);

@@ -6,15 +6,9 @@
     "isPurchased": false
   },
   {
-    "name": "Aguas",
-    "quantity": 1,
-    "price": null,
-    "isPurchased": false
-  },
-  {
     "name": "Aa",
-    "quantity": 3,
-    "price": null,
+    "quantity": "8",
+    "price": "9",
     "isPurchased": false
   }
 ]
