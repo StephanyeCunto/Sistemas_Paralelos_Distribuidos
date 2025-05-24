@@ -31,6 +31,9 @@ export class ItemController{
     }
 
     handleUpdate(err, params, callback){
+        if(params[3] == 'true') params[3] = true;
+        else if(params[3] == 'false') params[3] = false;
+
         let item;
         if(params[1] != null && params[1] <= 0) callback(null, `Quantidade inválida.`);
         else if(params[2] !== null && params[2] <= 0) callback(null, `Preço inválida`);

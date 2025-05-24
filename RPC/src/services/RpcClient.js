@@ -3,10 +3,13 @@ import pkg from 'xmlrpc';
 const { createClient } = pkg;
 
 export class RpcClient{
+  constructor(){
+    this.hostName = `192.168.122.1`; 
+  }
   
   create(itemName){
     const item = [itemName];
-    const client = createClient({ host: '127.0.0.1', port: 9090, path: '/' });
+    const client = createClient({ host: this.hostName, port: 9090, path: '/' });
 
     client.methodCall('create',item, function (error, value) {
       if (error) console.error(error);
@@ -15,7 +18,7 @@ export class RpcClient{
   }
 
   read(){    
-    const client = createClient({ host: '127.0.0.1', port: 9090, path: '/' });
+    const client = createClient({ host: this.hostName, port: 9090, path: '/' });
 
     client.methodCall('read',[],function(error,value){
       if (error) console.error(error);
@@ -24,7 +27,7 @@ export class RpcClient{
   }
 
   delete(itemName){
-    const client = createClient({ host: '127.0.0.1', port: 9090, path: '/' });
+    const client = createClient({ host: this.hostName, port: 9090, path: '/' });
 
     const item = [itemName];
     client.methodCall('delete',item,function(error,value){
@@ -33,8 +36,8 @@ export class RpcClient{
     });
   }
 
-  update(itemName,quantity = null,price = null,isPurchased){
-    const client = createClient({ host: '127.0.0.1', port: 9090, path: '/' });
+  update(itemName,quantity = null,price = null,isPurchased = null){
+    const client = createClient({ host: this.hostName, port: 9090, path: '/' });
 
     const item = [itemName,quantity,price,isPurchased];
     client.methodCall('update',item, function(error,value){

@@ -4,5 +4,11 @@
     "quantity": 9,
     "price": 3,
     "isPurchased": false
+  },
+  {
+    "name": "Aguas",
+    "quantity": 1,
+    "price": null,
+    "isPurchased": false
   }
 ]
