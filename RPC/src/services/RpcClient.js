@@ -9,7 +9,7 @@ export class RpcClient{
     this.hostName = `192.168.1.9`; 
   }
   
-  create(itemName, quantity, price, isPurchased){
+  create(itemName, quantity = null, price = null, isPurchased = null){
     const item = new Item(itemName, quantity, price, isPurchased);
     const client = createClient({ host: this.hostName, port: 9090, path: '/' });
 
@@ -30,9 +30,9 @@ export class RpcClient{
     });
   }
 
-  delete(itemName){
+  delete(itemName, quantity = null, price = null, isPurchased = null){
     const client = createClient({ host: this.hostName, port: 9090, path: '/' });
-    const item = new Item(itemName, quantity, price, isPurchased);
+    const item = new Item(itemName,quantity, price, isPurchased);
 
     client.methodCall('delete',item.getItem(),function(error,value){
         if (error) console.error(error);
@@ -41,7 +41,7 @@ export class RpcClient{
     });
   }
 
-  update(itemName, quantity, price, isPurchased){
+  update(itemName, quantity = null, price = null, isPurchased = null){
     const client = createClient({ host: this.hostName, port: 9090, path: '/' });
     const item = new Item(itemName, quantity, price, isPurchased);
 
@@ -53,4 +53,3 @@ export class RpcClient{
 }
 
 const client = new RpcClient();
-client.create('pasta de dente');

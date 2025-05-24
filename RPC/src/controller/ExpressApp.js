@@ -26,9 +26,13 @@ app.get('/updateItem', (req, res) =>{
   const itemPrice = req.query.itemPrice;
   rpc.update(itemName, itemQuantity, itemPrice);
   res.send('Alterando item');
-}
+});
 
-)
+app.get('/getItems', (req, res) => {
+  rpc.read((items) => {
+    res.json(items);
+  });
+});
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Servidor disponível na rede: http://172.25.0.19:${PORT}`);

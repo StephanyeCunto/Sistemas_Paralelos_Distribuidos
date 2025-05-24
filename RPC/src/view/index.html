@@ -1,25 +1,488 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Lista de Compras</title>
-    </head>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Compras</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    <form action="/addItem"  method="GET">
-        <input type="text" name="itemNameAdd">
-        <button  type="submit"> Adicionar Item </button>
-    </form>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
 
-    <form action="/deleteItem" method="GET">
-        <input type="text" name="itemNameDelete">
-        <button type="submit"> Deletar Item </button>
-    </form>
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
 
-    <form action="/updateItem" method="GET">
-        <input type="text" name="itemNameUpdate">
-        <input type="number" name="itemQuantity">
-        <input type="number" name="itemPrice">
-        <button type="submit"> Alterar Item</button>
-    </form>
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+
+        .actions-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .action-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .action-card h3 {
+            color: #4facfe;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.3rem;
+        }
+
+        .icon {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            background: #fafbfc;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+            background: white;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #feca57 0%, #ff9ff3 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .items-list {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .items-list h3 {
+            color: #4facfe;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .item {
+            display: grid;
+            grid-template-columns: auto 1fr auto auto auto;
+            gap: 15px;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #e1e5e9;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            background: #fafbfc;
+            transition: all 0.3s ease;
+        }
+
+        .item:hover {
+            background: white;
+            border-color: #4facfe;
+            transform: translateX(5px);
+        }
+
+        .item.purchased {
+            opacity: 0.6;
+            text-decoration: line-through;
+            background: #f8f9ff;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .item-details {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-purchased {
+            background: #d1edff;
+            color: #0c5460;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e1e5e9;
+            border-top: 4px solid #4facfe;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        }
+
+        .notification.error {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+
+        @media (max-width: 768px) {
+            .actions-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .item {
+                grid-template-columns: 1fr;
+                gap: 10px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛒 Lista de Compras</h1>
+            <p>Gerencie seus itens de forma simples e eficiente</p>
+        </div>
+
+        <div class="main-content">
+            <div class="actions-section">
+                <!-- Adicionar Item -->
+                <div class="action-card">
+                    <h3>
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1H5C3.89 1 3 1.89 3 3V19A2 2 0 0 0 5 21H19A2 2 0 0 0 21 19V9H21ZM17 11V13H14V16H12V13H9V11H12V8H14V11H17Z"/>
+                        </svg>
+                        Adicionar Item
+                    </h3>
+                    <form id="addForm">
+                        <div class="form-group">
+                            <label for="itemNameAdd">Nome do Item</label>
+                            <input type="text" class="form-control" id="itemNameAdd" name="itemNameAdd" placeholder="Ex: Leite, Pão, Ovos..." required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Adicionar</button>
+                    </form>
+                </div>
+
+                <!-- Deletar Item -->
+                <div class="action-card">
+                    <h3>
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"/>
+                        </svg>
+                        Remover Item
+                    </h3>
+                    <form id="deleteForm">
+                        <div class="form-group">
+                            <label for="itemNameDelete">Nome do Item</label>
+                            <input type="text" class="form-control" id="itemNameDelete" name="itemNameDelete" placeholder="Nome do item a remover" required>
+                        </div>
+                        <button type="submit" class="btn btn-danger">Remover</button>
+                    </form>
+                </div>
+
+                <!-- Atualizar Item -->
+                <div class="action-card">
+                    <h3>
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z"/>
+                        </svg>
+                        Atualizar Item
+                    </h3>
+                    <form id="updateForm">
+                        <div class="form-group">
+                            <label for="itemNameUpdate">Nome do Item</label>
+                            <input type="text" class="form-control" id="itemNameUpdate" name="itemNameUpdate" placeholder="Nome do item" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="itemQuantity">Quantidade</label>
+                            <input type="number" class="form-control" id="itemQuantity" name="itemQuantity" min="1" placeholder="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="itemPrice">Preço (R$)</label>
+                            <input type="number" class="form-control" id="itemPrice" name="itemPrice" min="0" step="0.01" placeholder="0.00">
+                        </div>
+                        <button type="submit" class="btn btn-warning">Atualizar</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Lista de Itens -->
+            <div class="items-list">
+                <h3>
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M3,5H9V11H3V5M5,7V9H7V7H5M11,7H21V9H11V7M11,15H21V17H11V15M5,20L1.5,16.5L2.91,15.09L5,17.17L9.59,12.59L11,14L5,20Z"/>
+                    </svg>
+                    Meus Itens
+                    <button onclick="loadItems()" class="btn" style="width: auto; margin-left: auto; padding: 8px 15px; font-size: 0.9rem;">🔄 Atualizar</button>
+                </h3>
+                <div id="itemsList">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        Carregando itens...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Função para mostrar notificações
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.classList.add('show'), 100);
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => document.body.removeChild(notification), 300);
+            }, 3000);
+        }
+
+        // Função para fazer requisições com feedback visual
+        async function makeRequest(url, successMessage) {
+            try {
+                const response = await fetch(url);
+                const result = await response.text();
+                showNotification(successMessage, 'success');
+                loadItems(); // Recarrega a lista
+                return result;
+            } catch (error) {
+                showNotification('Erro na operação: ' + error.message, 'error');
+                console.error('Erro:', error);
+            }
+        }
+
+        // Handlers dos formulários
+        document.getElementById('addForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const itemName = document.getElementById('itemNameAdd').value.trim();
+            if (itemName) {
+                await makeRequest(`/addItem?itemNameAdd=${encodeURIComponent(itemName)}`, 'Item adicionado com sucesso!');
+                document.getElementById('itemNameAdd').value = '';
+            }
+        });
+
+        document.getElementById('deleteForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const itemName = document.getElementById('itemNameDelete').value.trim();
+            if (itemName) {
+                await makeRequest(`/deleteItem?itemNameDelete=${encodeURIComponent(itemName)}`, 'Item removido com sucesso!');
+                document.getElementById('itemNameDelete').value = '';
+            }
+        });
+
+        document.getElementById('updateForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const itemName = document.getElementById('itemNameUpdate').value.trim();
+            const quantity = document.getElementById('itemQuantity').value;
+            const price = document.getElementById('itemPrice').value;
+            
+            if (itemName) {
+                const params = new URLSearchParams({
+                    itemNameUpdate: itemName,
+                    itemQuantity: quantity || '',
+                    itemPrice: price || ''
+                });
+                await makeRequest(`/updateItem?${params}`, 'Item atualizado com sucesso!');
+                
+                // Limpar formulário
+                document.getElementById('itemNameUpdate').value = '';
+                document.getElementById('itemQuantity').value = '';
+                document.getElementById('itemPrice').value = '';
+            }
+        });
+
+        // Função para carregar e exibir itens (simulada - você precisará implementar um endpoint /getItems)
+        async function loadItems() {
+            const itemsList = document.getElementById('itemsList');
+            itemsList.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    Carregando itens...
+                </div>
+            `;
+
+            // Simulação de dados (substitua por chamada real à API)
+            setTimeout(() => {
+                const mockItems = [
+                    { name: "Coisa aleatoria", quantity: 9, price: 3, isPurchased: false },
+                    { name: "Aguas", quantity: 1, price: null, isPurchased: false },
+                    { name: "Pasta de dente", quantity: 2, price: null, isPurchased: false }
+                ];
+
+                if (mockItems.length === 0) {
+                    itemsList.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: #666;">
+                            <svg style="width: 60px; height: 60px; margin-bottom: 20px; opacity: 0.3;" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M17,18C17.56,18 18,18.44 18,19S17.56,20 17,20 16,19.56 16,19 16.44,18 17,18M1,2V4H3L6.6,11.59L5.25,14.04C5.09,14.32 5,14.65 5,15A2,2 0 0,0 7,17H19V15H7.42A0.25,0.25 0 0,1 7.17,14.75L7.2,14.63L8.1,13H15.55C16.3,13 16.96,12.59 17.3,11.97L20.88,5H5.21L4.27,3H1M7,18C7.56,18 8,18.44 8,19S7.56,20 7,20 6,19.56 6,19 6.44,18 7,18Z"/>
+                            </svg>
+                            <h3>Nenhum item encontrado</h3>
+                            <p>Adicione alguns itens à sua lista de compras!</p>
+                        </div>
+                    `;
+                } else {
+                    itemsList.innerHTML = mockItems.map(item => `
+                        <div class="item ${item.isPurchased ? 'purchased' : ''}">
+                            <div class="item-name">${item.name}</div>
+                            <div class="item-details">
+                                Qtd: ${item.quantity}${item.price ? ` • R$ ${item.price.toFixed(2)}` : ''}
+                            </div>
+                            <div class="status-badge ${item.isPurchased ? 'status-purchased' : 'status-pending'}">
+                                ${item.isPurchased ? 'Comprado' : 'Pendente'}
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }, 1000);
+        }
+
+        // Carregar itens ao inicializar a página
+        document.addEventListener('DOMContentLoaded', loadItems);
+    </script>
+</body>
 </html>
