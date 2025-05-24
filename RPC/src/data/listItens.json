@@ -10,5 +10,11 @@
     "quantity": 1,
     "price": null,
     "isPurchased": false
+  },
+  {
+    "name": "Pasta de dente",
+    "quantity": 2,
+    "price": null,
+    "isPurchased": false
   }
 ]

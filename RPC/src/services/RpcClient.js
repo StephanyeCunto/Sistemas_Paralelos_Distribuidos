@@ -1,19 +1,22 @@
 import pkg from 'xmlrpc';
 
+import { Item } from '../dto/Item.js';
+
 const { createClient } = pkg;
 
 export class RpcClient{
   constructor(){
-    this.hostName = `192.168.122.1`; 
+    this.hostName = `192.168.1.9`; 
   }
   
-  create(itemName){
-    const item = [itemName];
+  create(itemName, quantity, price, isPurchased){
+    const item = new Item(itemName, quantity, price, isPurchased);
     const client = createClient({ host: this.hostName, port: 9090, path: '/' });
 
-    client.methodCall('create',item, function (error, value) {
+    client.methodCall('create',item.getItem(), function (error, value) {
       if (error) console.error(error);
-      else console.log('Resposta do servidor:', value);
+
+      return value;
     });
   }
 
@@ -22,27 +25,32 @@ export class RpcClient{
 
     client.methodCall('read',[],function(error,value){
       if (error) console.error(error);
-      else console.log('Resposta do servidor:', value);
+
+      return value;
     });
   }
 
   delete(itemName){
     const client = createClient({ host: this.hostName, port: 9090, path: '/' });
+    const item = new Item(itemName, quantity, price, isPurchased);
 
-    const item = [itemName];
-    client.methodCall('delete',item,function(error,value){
+    client.methodCall('delete',item.getItem(),function(error,value){
         if (error) console.error(error);
-        else console.log('Resposta do servidor:', value);
+        return value;
+
     });
   }
 
-  update(itemName,quantity = null,price = null,isPurchased = null){
+  update(itemName, quantity, price, isPurchased){
     const client = createClient({ host: this.hostName, port: 9090, path: '/' });
+    const item = new Item(itemName, quantity, price, isPurchased);
 
-    const item = [itemName,quantity,price,isPurchased];
-    client.methodCall('update',item, function(error,value){
+    client.methodCall('update',item.getItem(), function(error,value){
       if (error) console.error(error);
-      else console.log('Resposta do servidor:', value);
+      return value;
     });
   }
 }
+
+const client = new RpcClient();
+client.create('pasta de dente');
