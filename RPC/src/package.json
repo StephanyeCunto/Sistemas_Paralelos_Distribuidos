@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^5.1.0",
     "sax": "^1.2.4",
     "xmlbuilder": "^8.2.2",

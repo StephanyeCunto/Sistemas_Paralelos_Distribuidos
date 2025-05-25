@@ -1,25 +1,34 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Lista de Compras</title>
-    </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lista de Compras</title>
+</head>
+<body>
 
-    <form action="/addItem"  method="GET">
-        <input type="text" name="itemNameAdd">
-        <button  type="submit"> Adicionar Item </button>
-    </form>
+  <form action="/addItem" method="GET">
+    <input type="text" name="itemNameAdd" required>
+    <button type="submit">Adicionar Item</button>
+  </form>
 
-    <form action="/deleteItem" method="GET">
-        <input type="text" name="itemNameDelete">
-        <button type="submit"> Deletar Item </button>
-    </form>
+  <form action="/deleteItem" method="GET">
+    <input type="text" name="itemNameDelete" required>
+    <button type="submit">Deletar Item</button>
+  </form>
 
-    <form action="/updateItem" method="GET">
-        <input type="text" name="itemNameUpdate">
-        <input type="number" name="itemQuantity">
-        <input type="number" name="itemPrice">
-        <button type="submit"> Alterar Item</button>
-    </form>
+  <form action="/updateItem" method="GET">
+    <input type="text" name="itemNameUpdate" required>
+    <input type="number" name="itemQuantity" required>
+    <input type="number" name="itemPrice" required>
+    <button type="submit">Alterar Item</button>
+  </form>
+
+  <div id="lista-itens"></div>
+
+  <script>
+    console.log('http://192.168.1.9:3000/getItems');
+  </script>
+
+</body>
 </html>

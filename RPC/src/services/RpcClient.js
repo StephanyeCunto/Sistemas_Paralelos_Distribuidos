@@ -25,7 +25,6 @@ export class RpcClient{
 
     client.methodCall('read',[],function(error,value){
       if (error) console.error(error);
-
       return value;
     });
   }
