@@ -12,9 +12,15 @@
     "isPurchased": false
   },
   {
-    "name": "Aa",
+    "name": "Agua",
     "quantity": 5,
-    "price": 7,
+    "price": 4,
+    "isPurchased": false
+  },
+  {
+    "name": "Re",
+    "quantity": 1,
+    "price": null,
     "isPurchased": false
   }
 ]

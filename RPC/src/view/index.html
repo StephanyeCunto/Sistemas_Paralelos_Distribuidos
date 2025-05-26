@@ -1,42 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lista de Compras</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lista de Compras</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <h1>Lista de Compras</h1>
+    
+    <section>
+        <h2>Adicionar Item</h2>
+        <form id="addForm">
+            <input type="text" id="itemNameAdd" placeholder="Nome do item" required />
+            <button type="submit">Adicionar</button>
+        </form>
+    </section>
+    
+    <section>
+        <h2>Deletar Item</h2>
+        <form id="deleteForm">
+            <input type="text" id="itemNameDelete" placeholder="Nome do item" required />
+            <button type="submit">Deletar</button>
+        </form>
+    </section>
+    
+    <section>
+        <h2>Alterar Item</h2>
+        <form id="updateForm">
+            <input type="text" id="itemNameUpdate" placeholder="Nome do item" required />
+            <input type="number" id="itemQuantity" placeholder="Quantidade" min="1" required />
+            <input type="number" id="itemPrice" placeholder="Preço" step="0.01" min="0" required />
+            <button type="submit">Alterar</button>
+        </form>
+    </section>
+    
+    <section id="lista-itens">
+        <h2>Itens na Lista</h2>
+        <ul id="itemList">
+            <li class="loading">Carregando itens...</li>
+        </ul>
+    </section>
 
-  <form action="/addItem" method="GET">
-    <input type="text" name="itemNameAdd" required>
-    <button type="submit">Adicionar Item</button>
-  </form>
-
-  <form action="/deleteItem" method="GET">
-    <input type="text" name="itemNameDelete" required>
-    <button type="submit">Deletar Item</button>
-  </form>
-
-  <form action="/updateItem" method="GET">
-    <input type="text" name="itemNameUpdate" required>
-    <input type="number" name="itemQuantity" required>
-    <input type="number" name="itemPrice" required>
-    <button type="submit">Alterar Item</button>
-  </form>
-
-  <div id="lista-itens"></div>
-
-  <script>
-    fetch('http://192.168.1.9:3000/getItems')
-      .then(response => response.json())
-      .then(data => {
-
-        console.log(data);
-      })
-      .catch(err => {
-        console.error('Erro ao carregar itens:', err);
-      });
-  </script>
-
+    <script src="js/script.js"></script>
 </body>
 </html>
