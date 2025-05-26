@@ -6,9 +6,15 @@
     "isPurchased": false
   },
   {
+    "name": "Teste",
+    "quantity": 2,
+    "price": null,
+    "isPurchased": false
+  },
+  {
     "name": "Aa",
-    "quantity": "8",
-    "price": "9",
+    "quantity": 5,
+    "price": 7,
     "isPurchased": false
   }
 ]

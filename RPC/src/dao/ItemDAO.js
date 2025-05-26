@@ -18,8 +18,8 @@ export class ItemDAO{
     }
 
     update(item,quantity = null,price = null,isPurchased = null){
-        if(quantity != null && quantity > 0) item.quantity = quantity;
-        if(price != null && price > 0) item.price = price;
+        if(quantity != null && quantity > 0) item.quantity = parseInt(quantity);
+        if(price != null && price > 0) item.price = parseFloat(price);
         if(isPurchased != null && isPurchased.length > 0) item.isPurchased = isPurchased;
         this.deleteByName(item.name);
         this.addItem(item);

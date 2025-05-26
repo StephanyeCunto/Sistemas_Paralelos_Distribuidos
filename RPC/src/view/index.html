@@ -27,7 +27,15 @@
   <div id="lista-itens"></div>
 
   <script>
-    console.log('http://192.168.1.9:3000/getItems');
+    fetch('http://192.168.1.9:3000/getItems')
+      .then(response => response.json())
+      .then(data => {
+
+        console.log(data);
+      })
+      .catch(err => {
+        console.error('Erro ao carregar itens:', err);
+      });
   </script>
 
 </body>

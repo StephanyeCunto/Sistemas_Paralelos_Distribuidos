@@ -30,17 +30,20 @@ export class ItemController{
         return callback(null, `Item não encontrado na lista.`);
     }
 
-    handleUpdate(err, params, callback){
-        let item;
-        if(params[1] != null && params[1] <= 0)return callback(null, `Quantidade inválida.`);
-        if(params[2] !== null && params[2] <= 0) return callback(null, `Preço inválida`);
-        if(params[3] !== null  && typeof params[3] !== "boolean") return callback(null, `Disponibilidade inválida (esperado true ou false).`);
-        if(item = this.itemDAO.findItemByName(params[0])){
-            this.itemDAO.update(item,params[1],params[2],params[3]);
+    handleUpdate(err, params, callback) {
+        const item = this.itemDAO.findItemByName(params[0]);
+        if (item) {
+            if (params[1] != null) if (typeof params[1] !== "number" || params[1] <= 0) return callback(null, `Quantidade inválida.`);
+            if (params[2] != null) if (typeof params[2] !== "number" || params[2] <= 0) return callback(null, `Preço inválido.`);
+            if (params[3] != null) if (typeof params[3] !== "boolean") return callback(null, `Disponibilidade inválida (esperado true ou false).`);
+
+            this.itemDAO.update(item, params[1], params[2], params[3]);
             return callback(null, `Item alterado com sucesso.`);
         }
+
         return callback(null, `Item não encontrado na lista.`);
     }
+
 
     handleRead(err, params, callback){
         const items = this.itemDAO.getAll();

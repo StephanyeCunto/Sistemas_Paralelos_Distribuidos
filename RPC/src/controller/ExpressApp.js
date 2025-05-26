@@ -11,29 +11,31 @@ const rpc = new RpcClient();
 app.use(express.static('../view'));
 app.use(cors());
 
-app.get('/addItem', (req, res) => {
+app.get('/addItem',async (req, res) => {
   const itemName = req.query.itemNameAdd;
-  rpc.create(itemName);
-  res.send('Chamando função addItem no servidor RPC '+itemName);
+  const resAdd = await rpc.create(itemName);
+  res.send(resAdd);
 });
 
-app.get('/deleteItem', (req, res) =>{
+app.get('/deleteItem', async (req, res) =>{
     const itemName = req.query.itemNameDelete;
-    rpc.delete(itemName);
-    res.send('Deletando item');
+    const resDelete = await rpc.delete(itemName);
+    res.send(resDelete);
 });
 
-app.get('/updateItem', (req, res) =>{
+app.get('/updateItem', async (req, res) =>{
   const itemName = req.query.itemNameUpdate;
   const itemQuantity = req.query.itemQuantity;
   const itemPrice = req.query.itemPrice;
-  rpc.update(itemName, itemQuantity, itemPrice);
-  res.send('Alterando item');
+  const resUpdate = await rpc.update(itemName, itemQuantity, itemPrice);
+  res.send(resUpdate);
 });
 
-app.get('/getItems', (req, res) => {
-    res.json(rpc.read());
+app.get('/getItems', async (req, res) => {
+    const items = await rpc.read();
+    res.json(items);
 });
+
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Servidor disponível na rede: http://172.25.0.19:${PORT}`);
