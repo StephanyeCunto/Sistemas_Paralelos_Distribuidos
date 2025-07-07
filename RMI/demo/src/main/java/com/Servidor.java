@@ -14,12 +14,12 @@ public class Servidor implements olaInterface {
 
   public static void main (String args[]){
     try{
-        System.setProperty("java.rmi.server.hostname", "192.168.1.2");
+      //  System.setProperty("java.rmi.server.hostname", "127.0.0.1");
 
         Servidor obj = new Servidor();
         olaInterface stub = (olaInterface) UnicastRemoteObject.exportObject(obj,0);
 
-        Registry registry = LocateRegistry.createRegistry(1092);
+        Registry registry = LocateRegistry.createRegistry(1099); 
         registry.bind("Ola", stub);
 
         System.err.println("Servidor pronto . . .");
