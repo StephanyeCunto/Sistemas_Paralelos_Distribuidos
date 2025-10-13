@@ -42,6 +42,7 @@ public abstract class Programas {
     protected String[] getErro(Process process){
         try(BufferedReader readerError = new BufferedReader(new InputStreamReader(process.getErrorStream()))){
             return (readerError.lines().toList()).toArray(new String[0]);
+
         }catch ( IOException e){
             System.out.println("Erro ao tentar exibir erro: "+e);
         }
@@ -62,8 +63,8 @@ public abstract class Programas {
 
     protected List<String> createCommand(int i, String process){
         List<String> command = new ArrayList<>();
-        String jarPath = process.equals("paralelo") ? "paralelo/target/paralelo-1.0-SNAPSHOT.jar"
-        : "sequencial/target/sequencial-1.0-SNAPSHOT.jar";
+        String jarPath = process.equals("paralelo") ? "Atividade_Avaliativa/paralelo/target/paralelo-1.0-SNAPSHOT.jar"
+        : "Atividade_Avaliativa/sequencial/target/sequencial-1.0-SNAPSHOT.jar";
     
         command.addAll(List.of("java", "-jar", jarPath));
     

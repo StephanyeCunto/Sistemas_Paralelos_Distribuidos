@@ -20,7 +20,7 @@ public class Main {
 
     private void run(){
         long startTime = System.currentTimeMillis();
-        OpenPDF pdf = new OpenPDF("./initialize/src/main/resources/Clarissa_Harlowe.pdf");
+        OpenPDF pdf = new OpenPDF("Atividade_Avaliativa/initialize/src/main/resources/Clarissa_Harlowe.pdf");
         words = pdf.getWords();
         System.out.println("Tempo de leitura: "+ (System.currentTimeMillis() - startTime) + "ms, "+(System.currentTimeMillis() - startTime)/1000 + "s");
 
