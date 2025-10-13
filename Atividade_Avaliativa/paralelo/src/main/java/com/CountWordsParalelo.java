@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class CountWordsParalelo {
     String[] words;
     AtomicInteger[] searchWordsCount;
+    int[][] searchWordsCountThread;
     int threads;
 
     BufferedReader reader;
@@ -38,6 +39,8 @@ public class CountWordsParalelo {
             wordMap.put(args[i], i);
             searchWordsCount[i] = new AtomicInteger();
         }
+        
+        searchWordsCountThread = new int[searchWordsCount.length][threads];
 
         loadWords();
     }
@@ -55,12 +58,12 @@ public class CountWordsParalelo {
 
         int limite = (indice == threads - 1) ? words.length : (indice + 1) * wordsPerThread;
 
-        for(int i = wordInitial; i < limite;i++) searchWord(words[i]);
+        for(int i = wordInitial; i < limite;i++) searchWord(words[i],indice);
     }
 
-    private void searchWord(String word){
+    private void searchWord(String word, int indice){
         Integer index = wordMap.get(word);
-        if (index != null) searchWordsCount[index].incrementAndGet();
+        if (index != null) searchWordsCountThread[index][indice]++;
     }
 
     private void initializeThread() {
@@ -75,9 +78,13 @@ public class CountWordsParalelo {
             thread[i].start();
         }
 
-        for(int i=0; i< threads; i++){
+        for(int i=0; i < threads; i++){
+                        int indice = i;
+
             try{
                 thread[i].join();
+                            for(String key : wordMap.keySet()) searchWordsCount[wordMap.get(key)].addAndGet(searchWordsCountThread[wordMap.get(key)][indice]);
+
             }catch(InterruptedException e){
                 System.out.println("Erro ao finalizar a thread "+i+", "+ e);
             }
@@ -85,8 +92,6 @@ public class CountWordsParalelo {
     }
 
     private void loadResults(){
-        for(String key : wordMap.keySet()){
-            System.out.println("Key: "+ key+ " : "+ searchWordsCount[wordMap.get(key)].get());
-        }
+        for(String key : wordMap.keySet())  System.out.println("Key: "+ key+ " : "+ searchWordsCount[wordMap.get(key)].get());
     }
 }

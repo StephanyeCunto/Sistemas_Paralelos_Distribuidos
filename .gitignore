@@ -1,7 +1,5 @@
-RPC/src/node_modules/
 .env
-RPC/src/package-lock.json
 
 .DS_Store
-RPC/src/.DS_Store
 
+*.jar

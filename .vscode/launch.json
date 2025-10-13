@@ -3,6 +3,37 @@
   "configurations": [
     {
       "type": "java",
+      "name": "Sequencial",
+      "request": "launch",
+      "mainClass": "Sequencial"
+    },
+    {
+      "type": "java",
+      "name": "sequencial",
+      "request": "launch",
+      "mainClass": "sequencial"
+    },
+    {
+      "type": "java",
+      "name": "HelloMPI",
+      "request": "launch",
+      "mainClass": "HelloMPI"
+    },
+    {
+      "type": "java",
+      "name": "HelloMPI",
+      "request": "launch",
+      "mainClass": "com.HelloMPI",
+      "projectName": "mpi-demo"
+    },
+    {
+      "type": "java",
+      "name": "Servidor",
+      "request": "launch",
+      "mainClass": "com.Servidor"
+    },
+    {
+      "type": "java",
       "name": "Main",
       "request": "launch",
       "mainClass": "com/com.Main",
